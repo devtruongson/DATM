@@ -1,0 +1,20 @@
+{
+  "cinemas": [
+    {
+      "name": "CGV",
+      "address": "bắc từ liêm",
+      "contact": 147852,
+      "province": "province2",
+      "imageUrl": "https://res.cloudinary.com/dxhgeg7vi/image/upload/v1740420632/omallck2pvdrnwzcppjw.jpg",
+      "id": 1
+    },
+    {
+      "name": "Galaxy",
+      "address": "Long Biên",
+      "contact": 852963,
+      "province": "province2",
+      "imageUrl": "https://res.cloudinary.com/dxhgeg7vi/image/upload/v1740478458/bnzglcaoesmoydmdacer.jpg",
+      "id": 2
+    }
+  ]
+}

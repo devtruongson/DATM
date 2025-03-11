@@ -1,0 +1,19 @@
+.form-slick{
+    .slick-arrow{
+        height: 40px;
+        width: 40px;
+        background-color: red;
+        border-radius: 100px;
+        /* display: none !important; */
+    }
+    
+    .slick-next{
+        right: 20px;
+        
+    }
+
+    .slick-prev {
+        left: 20px !important;
+        z-index: 10;
+    }
+}

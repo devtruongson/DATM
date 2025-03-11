@@ -1,0 +1,14 @@
+.slick-arrow {
+
+    display: none !important;
+}
+
+.arrow_show {
+    .slick-arrow {
+        display: block !important;
+    }
+}
+
+.div-full div {
+    height: 100%;
+}
