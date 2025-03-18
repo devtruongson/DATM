@@ -1,4 +1,6 @@
 import { Carousel, Typography } from 'antd';
+import { useEffect, useMemo } from 'react';
+import { useGetListMovie } from '../../../services/movie/getListMovie';
 import SearchInput from '../../atoms/Input/SearchInput';
 import LabelCommon from '../../atoms/LabelCommon';
 import Card from '../../molecules/Card/Card';
@@ -87,6 +89,23 @@ const list = Array.from({ length: 10 }, (_, i) => {
 });
 
 const MovieCate = () => {
+    const { data, isSuccess, isLoading } = useGetListMovie({
+        enabled: true,
+    });
+
+    const listMovies = useMemo(() => data?.data || [], [data]);
+
+    useEffect(() => {
+        const _fetch = async () => {
+            try {
+                const res = await axios.g;
+            } catch (error) {
+                console.log('error', error);
+            }
+        };
+        _fetch();
+    }, []);
+
     return (
         <MainTemplate>
             <ContainerWapper>
@@ -139,17 +158,7 @@ const MovieCate = () => {
                         </Title>
                         <div className="flex lg:flex-row flex-col justify-between lg:items-start items-center">
                             <div className="w-full">
-                                {[
-                                    { cate: 'Movies', data: list },
-                                    { cate: 'Movies', data: list },
-                                    { cate: 'Movies', data: list },
-                                ].map((item, index) => {
-                                    return (
-                                        <div className="mb-[40px] mb-150-cus" key={index}>
-                                            <ListFilm data={item.data} cate={item.cate} />
-                                        </div>
-                                    );
-                                })}
+                                <ListFilm data={listMovies} cate={'Danh sách phim'} />
                             </div>
                         </div>
                     </div>

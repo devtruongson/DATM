@@ -7,7 +7,9 @@ export const GET_TODO_QUERY_KEY = 'communes';
 
 const getTodo = async (payload) => {
     console.log(payload);
-    const { data } = await api.get(``);
+    const { data } = await api.get('http://filmgo.io.vn/api/movies', {
+        params: payload,
+    });
     return data;
 };
 

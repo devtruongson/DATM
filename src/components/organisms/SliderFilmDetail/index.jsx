@@ -1,8 +1,8 @@
-import { useNavigate } from 'react-router-dom';
-import { routes } from '../../../routes';
-import { useCallback } from 'react';
 import { CalendarOutlined, ClockCircleOutlined, HeartOutlined } from '@ant-design/icons';
+import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import slider from '../../../../public/images/content/movie_category/slider_img1.jpg';
+import { routes } from '../../../routes';
 
 /* eslint-disable react/prop-types */
 const SliderFilmDetail = ({ data, image }) => {
@@ -17,12 +17,12 @@ const SliderFilmDetail = ({ data, image }) => {
     return (
         <div className="flex lg:flex-row flex-col justify-center md:p-[0] p-[10px]">
             <div className="lg:w-[35%] w-[100%] text-start pl-[20px]">
-                <p className="text-[14px] mb-[10px]">{data?.categories?.map((item) => item?.name).join(' / ')}</p>
+                <p className="text-[14px] mb-[10px]">{data?.actors?.map((item) => item?.name).join(' / ')}</p>
                 <p className="text-[12px]">{data?.languages?.join(', ')}</p>
 
                 <div className="flex justify-start items-center gap-[8px] mb-[10px]">
                     <p className="text-[24px] text-[#f44343]">{data?.name}</p>
-                    {data?.graphics?.map((item, index) => {
+                    {data?.genres?.map((item, index) => {
                         return (
                             <div className="bg-[#00000026] text-white px-[8px]" key={index}>
                                 {item?.name}
@@ -33,15 +33,15 @@ const SliderFilmDetail = ({ data, image }) => {
                 <div className="flex flex-col gap-[8px] items-start">
                     <div className="flex justify-start items-center gap-[8px]">
                         <CalendarOutlined />
-                        <p>{data?.date}</p>
+                        <p>{data?.release_date}</p>
                     </div>
                     <div className="flex justify-start items-center gap-[8px]">
                         <ClockCircleOutlined />
-                        <p>{data?.duration}</p>
+                        <p>{data?.duration} Phút</p>
                     </div>
                     <div className="flex justify-start items-center gap-[8px]">
                         <HeartOutlined />
-                        <p>{data?.votes}</p>
+                        <p>{data?.rating}</p>
                     </div>
                 </div>
 

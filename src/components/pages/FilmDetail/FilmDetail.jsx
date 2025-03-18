@@ -1,4 +1,8 @@
+import { useMemo } from 'react';
+import { useParams } from 'react-router-dom';
 import Slider from 'react-slick';
+import { useGetListMovie } from '../../../services/movie/getListMovie';
+import { useGetDetailMovie } from '../../../services/movie/getMovieDetail';
 import Indicator from '../../atoms/Indicator';
 import ListFilm from '../../organisms/ListFilm';
 import Preview from '../../organisms/Preview';
@@ -113,23 +117,39 @@ const movieTrending = [
     },
 ];
 
+const settings = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+};
+
 const Home = () => {
-    const settings = {
-        dots: false,
-        infinite: true,
-        speed: 500,
-        slidesToShow: 1,
-        slidesToScroll: 1,
-    };
+    const { id } = useParams();
+
+    const { data: dataCall } = useGetDetailMovie({
+        payload: { id: id },
+        enabled: true,
+    });
+    const { data: dataListMovie } = useGetListMovie({
+        enabled: true,
+    });
+
+    const listMovies = useMemo(() => dataListMovie?.data || [], [dataListMovie]);
+
+    const dataDetail = useMemo(() => dataCall?.data || null, [dataCall]);
+    console.log(dataDetail);
+
     return (
         <BasicTemplate>
             <div className="pt-[25px] w-full">
-                <Preview data={data} />
+                {dataDetail && <Preview data={dataDetail} />}
                 <div className="my-[40px]">
                     <Slider {...settings}>
-                        {data?.banners?.length
-                            ? data?.banners.map((item, index) => {
-                                  return <SliderFilmDetail key={index} data={data} image={item} />;
+                        {listMovies?.length
+                            ? listMovies?.map((item, index) => {
+                                  return <SliderFilmDetail key={index} data={item} image={null} />;
                               })
                             : null}
                     </Slider>
@@ -137,17 +157,7 @@ const Home = () => {
 
                 <div className="flex lg:flex-row flex-col justify-between lg:items-start items-center">
                     <div className="lg:w-[78%] w-[95%]">
-                        {[
-                            { cate: 'Movies', data: list },
-                            { cate: 'Movies', data: list },
-                            { cate: 'Movies', data: list },
-                        ].map((item, index) => {
-                            return (
-                                <div className="mb-[40px] mb-150-cus" key={index}>
-                                    <ListFilm data={item.data} cate={item.cate} />
-                                </div>
-                            );
-                        })}
+                        <ListFilm data={listMovies} cate={'Danh sach phim'} />
                     </div>
                     <div
                         className="lg:w-[20%] w-[95%] sm:block hidden p-[10px] rounded-[8px]"

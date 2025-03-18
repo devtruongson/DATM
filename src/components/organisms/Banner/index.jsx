@@ -30,6 +30,9 @@ const Banner = () => {
         if (pathname.includes('/movie_category')) {
             return 'Movie Category';
         }
+        if (pathname.includes('/')) {
+            return 'Movie Category';
+        }
         return '';
     }, [pathname]);
 
