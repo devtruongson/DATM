@@ -1,13 +1,12 @@
+import { Breadcrumb, Button, Empty, Spin, Tabs } from 'antd';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import Slider from 'react-slick';
-import { useGetListMovie } from '../../../services/movie/getListMovie';
+import { handleBuildShowTimes } from '../../../helpers/handleFilterShowtimes';
+import { hanldeGetIdViewYoutobe } from '../../../helpers/handleGetIdVideoProview';
 import { useGetDetailMovie } from '../../../services/movie/getMovieDetail';
-import Indicator from '../../atoms/Indicator';
-import ListFilm from '../../organisms/ListFilm';
-import Preview from '../../organisms/Preview';
-import SliderFilmDetail from '../../organisms/SliderFilmDetail';
+import { useGetShowtimes } from '../../../services/todo/useGetTodo';
 import BasicTemplate from '../../templates/BasicTemplate';
+import ContainerWapper from '../../templates/ContainerWapper';
 
 const data = {
     id: 1,
@@ -127,64 +126,183 @@ const settings = {
 
 const Home = () => {
     const { id } = useParams();
-
-    const { data: dataCall } = useGetDetailMovie({
+    const { data: dataCall, isLoading } = useGetDetailMovie({
         payload: { id: id },
         enabled: true,
     });
-    const { data: dataListMovie } = useGetListMovie({
-        enabled: true,
+    const { data: dataShowTimesQuery, isLoading: isLoadingShowTimes } = useGetShowtimes({
+        queryConfig: { enabled: true },
     });
 
-    const listMovies = useMemo(() => dataListMovie?.data || [], [dataListMovie]);
-
     const dataDetail = useMemo(() => dataCall?.data || null, [dataCall]);
-    console.log(dataDetail);
+    const dataShowTime = useMemo(
+        () => (dataShowTimesQuery?.data && handleBuildShowTimes(dataShowTimesQuery?.data, id)) || null,
+        [dataShowTimesQuery, id],
+    );
+
+    const handleBuilderShowtimesForDate = (dataBuider) => {
+        const dataBuilderData = [];
+        dataBuider.forEach((item) => {
+            const index = dataBuilderData.findIndex((dataItem) => dataItem.date === item.date);
+            if (index === -1) {
+                dataBuilderData.push({
+                    date: item.date,
+                    item: [item],
+                });
+            } else {
+                dataBuilderData[index].item.push(item);
+            }
+        });
+        return dataBuilderData;
+    };
 
     return (
         <BasicTemplate>
-            <div className="pt-[25px] w-full">
-                {dataDetail && <Preview data={dataDetail} />}
-                <div className="my-[40px]">
-                    <Slider {...settings}>
-                        {listMovies?.length
-                            ? listMovies?.map((item, index) => {
-                                  return <SliderFilmDetail key={index} data={item} image={null} />;
-                              })
-                            : null}
-                    </Slider>
-                </div>
-
-                <div className="flex lg:flex-row flex-col justify-between lg:items-start items-center">
-                    <div className="lg:w-[78%] w-[95%]">
-                        <ListFilm data={listMovies} cate={'Danh sach phim'} />
+            {isLoading ? (
+                <div className="h-[70vh] w-full flex justify-center items-center">
+                    <div className="flex justify-center flex-col gap-4 items-center">
+                        <Spin size="large" />
+                        <p>Đang tải phim</p>
                     </div>
-                    <div
-                        className="lg:w-[20%] w-[95%] sm:block hidden p-[10px] rounded-[8px]"
-                        style={{ boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px' }}
-                    >
-                        <p className="uppercase text-[16px] font-[500] mb-[16px]">Trending Search</p>
-                        <Indicator />
+                </div>
+            ) : (
+                dataDetail && (
+                    <ContainerWapper>
+                        <div className="pt-10">
+                            <Breadcrumb className="font-semibold text-[18px]">
+                                <Breadcrumb.Item>
+                                    <a href="/">Trang chủ</a>
+                                </Breadcrumb.Item>
+                                <Breadcrumb.Item>{dataDetail?.title}</Breadcrumb.Item>
+                            </Breadcrumb>
+                            <div className="flex gap-6 mt-6">
+                                <div>
+                                    <img
+                                        src={dataDetail?.poster}
+                                        alt={dataDetail?.title}
+                                        className="rounded-md aspect-[9/16] max-h-[400px] object-cover border-gray-400 border"
+                                    />
+                                </div>
+                                <div className="flex-1">
+                                    <h1 className="font-bold text-[#333333] text-[32px]">{dataDetail?.title}</h1>
+                                    <p className="font-semibold text-[#333333] text-[14px] mt-4 whitespace-pre-wrap">
+                                        {dataDetail?.description}
+                                    </p>
 
-                        <div className="mt-[40px] flex flex-col w-[100%] gap-[20px]">
-                            {movieTrending?.length
-                                ? movieTrending.map((item) => {
-                                      return (
-                                          <div className="flex justify-between items-start" key={item.id}>
-                                              <div className="">
-                                                  <p className="text-[16px]">{item?.name}</p>
-                                                  <p className="text-[14px] text-[#ccc]">Movies</p>
-                                              </div>
-
-                                              <p className="text-[#ff4444]">({item?.view})</p>
-                                          </div>
-                                      );
-                                  })
-                                : null}
+                                    <div className="relative overflow-x-auto mt-4">
+                                        <table className="rounded-md overflow-hidden w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                                <tr>
+                                                    <th scope="col" className="px-6 py-3">
+                                                        Genres
+                                                    </th>
+                                                    <th scope="col" className="px-6 py-3">
+                                                        Actors
+                                                    </th>
+                                                    <th scope="col" className="px-6 py-3">
+                                                        Duration
+                                                    </th>
+                                                    <th scope="col" className="px-6 py-3">
+                                                        Rating
+                                                    </th>
+                                                    <th scope="col" className="px-6 py-3">
+                                                        Release date
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                                    <td className="px-6 py-4">
+                                                        <ul className="space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
+                                                            {dataDetail?.genres?.map((item, index) => (
+                                                                <li key={index}>{item.name}</li>
+                                                            ))}
+                                                        </ul>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <ul className="space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
+                                                            {dataDetail?.actors?.map((item, index) => (
+                                                                <li key={index}>{item.name}</li>
+                                                            ))}
+                                                        </ul>
+                                                    </td>
+                                                    <td className="px-6 py-4">{dataDetail?.duration} Phút</td>
+                                                    <td className="px-6 py-4">{dataDetail?.rating}</td>
+                                                    <td className="px-6 py-4">{dataDetail?.release_date}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            {isLoadingShowTimes ? (
+                                <div className="flex justify-center flex-col gap-4 items-center">
+                                    <Spin size="large" />
+                                    <p>Đang tải danh sách phòng vé</p>
+                                </div>
+                            ) : (
+                                <div className="my-5">
+                                    <h2 className="pb-2 font-semibold text-[#333]">Danh sách phòng vé xem phim</h2>
+                                    {dataShowTime && dataShowTime?.length > 0 ? (
+                                        <Tabs
+                                            type="card"
+                                            defaultActiveKey={dataShowTime[0].date}
+                                            size={'large'}
+                                            style={{ marginBottom: 32 }}
+                                            items={handleBuilderShowtimesForDate(dataShowTime).map((item) => {
+                                                return {
+                                                    label: item.date,
+                                                    key: item.date,
+                                                    children: (
+                                                        <div>
+                                                            <div className="flex gap-4">
+                                                                {item.item.map((itemShowTime, index) => (
+                                                                    <div
+                                                                        key={index}
+                                                                        className="flex border border-gray-200  px-2 py-3 rounded-md flex-col items-center gap-2 justify-center"
+                                                                    >
+                                                                        <p className="text-sm text-center text-gray-500 dark:text-gray-400">
+                                                                            {itemShowTime.start_time?.split(' ')[1]} -{' '}
+                                                                            {itemShowTime.end_time?.split(' ')[1]}
+                                                                        </p>
+                                                                        <p className="text-sm text-center text-gray-500 dark:text-gray-400">
+                                                                            Dạp {itemShowTime?.screen?.cinema?.name} -
+                                                                            Phòng {itemShowTime?.screen?.name}
+                                                                        </p>
+                                                                        <Button type="primary" size="small">
+                                                                            Mua ngay
+                                                                        </Button>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    ),
+                                                };
+                                            })}
+                                        />
+                                    ) : (
+                                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                    )}
+                                </div>
+                            )}
+                            <div className="w-full h-[400px] mt-10">
+                                <h2 className="pb-2 font-semibold text-[#333]">Trailler phim {dataDetail.title}</h2>
+                                <iframe
+                                    className="rounded-md"
+                                    width="100%"
+                                    height="100%"
+                                    src={`https://www.youtube.com/embed/${hanldeGetIdViewYoutobe(dataDetail?.trailer)}`}
+                                    title="Quỷ Nhập Tràng Official Trailer | Beta Cinemas | Khởi chiếu /07/032025"
+                                    frameBorder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    referrerPolicy="strict-origin-when-cross-origin"
+                                    allowfullscreen
+                                ></iframe>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
+                    </ContainerWapper>
+                )
+            )}
         </BasicTemplate>
     );
 };

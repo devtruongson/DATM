@@ -1,7 +1,8 @@
 import Axios, { isAxiosError } from 'axios';
 
 const api = Axios.create({
-    baseURL: 'http://filmgo.io.vn',
+    // baseURL: process.env.NEXT_PUBLIC_BASE_URL,
+    baseURL: 'http://filmgo.io.vn/api',
     headers: {
         'Content-Type': 'application/json',
     },

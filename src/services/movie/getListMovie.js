@@ -4,7 +4,7 @@ import api from '../../libs/axios';
 export const GET_LIST_MOVIE = 'LIST_MOVIE';
 
 const getListMovie = async () => {
-    const { data } = await api.get(`/api/movies`);
+    const { data } = await api.get(`/movies`);
     return data;
 };
 export const getListMovieOptions = () =>

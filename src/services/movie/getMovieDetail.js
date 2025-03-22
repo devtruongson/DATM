@@ -4,7 +4,7 @@ import api from '../../libs/axios';
 export const GET_DETAIL_MOVIE = 'DETAIL_MOVIE';
 
 const getDetailMovie = async (payload) => {
-    const { data } = await api.get(`/api/movies/show/${payload.id}`);
+    const { data } = await api.get(`/movies/show/${payload.id}`);
     return data;
 };
 

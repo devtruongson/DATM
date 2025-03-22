@@ -1,6 +1,9 @@
 import { Carousel, Typography } from 'antd';
-import { useEffect, useMemo } from 'react';
-import { useGetListMovie } from '../../../services/movie/getListMovie';
+import { useMemo } from 'react';
+import { handleReBuildGenres } from '../../../helpers/handleReBuildGenres';
+import { handleBuilderMovies } from '../../../helpers/handleReBuildMovies';
+import { useGetAllGenres } from '../../../services/genres/getAllGenres';
+import { useGetAllMovies } from '../../../services/movie/useGetOneMovie';
 import SearchInput from '../../atoms/Input/SearchInput';
 import LabelCommon from '../../atoms/LabelCommon';
 import Card from '../../molecules/Card/Card';
@@ -8,103 +11,40 @@ import ListCategories from '../../molecules/ListCategories';
 import ListFilm from '../../organisms/ListFilm';
 import ContainerWapper from '../../templates/ContainerWapper';
 import MainTemplate from '../../templates/MainTemplate';
+import './styles.css';
 
 const { Title } = Typography;
-
-const cates = [
-    {
-        id: 1,
-        label: 'all',
-        values: 23123,
-    },
-    {
-        id: 2,
-        label: 'Action',
-        values: 512,
-    },
-    {
-        id: 3,
-        label: 'Romantic',
-        values: 23123,
-    },
-    {
-        id: 4,
-        label: ' Love',
-        values: 23123,
-    },
-    {
-        id: 5,
-        label: 'Musical',
-        values: 23123,
-    },
-    {
-        id: 6,
-        label: 'Drama',
-        values: 23123,
-    },
-];
-
-const list = Array.from({ length: 10 }, (_, i) => {
-    return {
-        id: i + 1,
-        name: 'Aquaman',
-        thumbnail: '',
-        trailer_url: 'https://www.youtube.com/embed/d_S6HyolN_w',
-        categories: [
-            {
-                id: 1,
-                name: 'ACTION',
-            },
-            {
-                id: 22,
-                name: 'Adventure',
-            },
-            {
-                id: 3,
-                name: 'Fantasy',
-            },
-        ],
-        graphics: [
-            {
-                id: 1,
-                name: '2D',
-            },
-            {
-                id: 2,
-                name: '3D',
-            },
-            {
-                id: 3,
-                name: '4D',
-            },
-        ],
-        languages: ['ENGLISH', 'HINDI', 'TAMIL'],
-        duration: '2:23', // thoi luong
-        date: '2025/01/01',
-        like: 85,
-        votes: 52291,
-        banners: ['', ''],
-        rate: 4.5,
-    };
-});
-
 const MovieCate = () => {
-    const { data, isSuccess, isLoading } = useGetListMovie({
-        enabled: true,
-    });
+    const { data } = useGetAllGenres({});
+    const genres = useMemo(
+        () =>
+            data?.data?.map((item) => {
+                return handleReBuildGenres(item);
+            }) || [],
+        [data],
+    );
 
-    const listMovies = useMemo(() => data?.data || [], [data]);
+    const { data: dataMovies } = useGetAllMovies({});
 
-    useEffect(() => {
-        const _fetch = async () => {
-            try {
-                const res = await axios.g;
-            } catch (error) {
-                console.log('error', error);
-            }
-        };
-        _fetch();
-    }, []);
+    const targetGenres = useMemo(() => {
+        if (!data?.data || !dataMovies?.data) return [];
+        return data.data.slice(0, 3).map((item) => ({
+            cate: item.name,
+            data: dataMovies.data
+                .filter((movie) => movie.genres?.some((genre) => genre.genre_id === item.id))
+                .map(handleBuilderMovies),
+        }));
+    }, [data?.data, dataMovies?.data]);
+
+    const listMovies = useMemo(
+        () =>
+            dataMovies?.data
+                ?.map((item) => {
+                    return handleBuilderMovies(item);
+                })
+                .slice(0, 10) || [],
+        [dataMovies],
+    );
 
     return (
         <MainTemplate>
@@ -143,22 +83,29 @@ const MovieCate = () => {
                 </div>
             </ContainerWapper>
             <ContainerWapper>
-                <div className="flex justify-between items-center mt-[40px] gap-[20px] mobile_custom">
+                <div className="flex lg:flex-row flex-col justify-between lg:items-start items-center mt-[40px] gap-[20px] w-[100%]">
                     <div
-                        className="lg:w-[28%] w-[95%] rounded-[10px] p-[24px] bg-white mx-auto"
+                        className="lg:w-[24%] w-[95%] rounded-[10px] p-[24px] bg-white"
                         style={{ boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px' }}
                     >
                         <SearchInput />
                         <LabelCommon label={'browse title'} />
-                        <ListCategories data={cates} />
+
+                        <ListCategories data={genres} />
                     </div>
-                    <div className="rounded-[10px] overflow-hidden flex-1 mt-[70px] lg:mt-0">
-                        <Title level={4} className="uppercase font-bold px-4">
+                    <div className="lg:w-[70%] w-[95%] rounded-[10px] overflow-hidden flex-1">
+                        <Title level={4} className="uppercase font-bold">
                             Our Top Movies
                         </Title>
                         <div className="flex lg:flex-row flex-col justify-between lg:items-start items-center">
                             <div className="w-full">
-                                <ListFilm data={listMovies} cate={'Danh sách phim'} />
+                                {targetGenres.map((item, index) => {
+                                    return (
+                                        <div className="mb-[40px]" key={index}>
+                                            <ListFilm data={item.data} cate={item.cate} />
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>
@@ -174,33 +121,12 @@ const MovieCate = () => {
                 >
                     TOP MOVIES IN THEATRES
                 </Title>
-                <Carousel
-                    autoplay
-                    arrows
-                    slidesToShow={8}
-                    className="arrow_show max-h-100"
-                    responsive={[
-                        {
-                            breakpoint: 768,
-                            settings: {
-                                slidesToShow: 2,
-                            },
-                        },
-                        {
-                            breakpoint: 1024,
-                            settings: {
-                                slidesToShow: 4,
-                            },
-                        },
-                        {
-                            breakpoint: 1280,
-                            settings: {
-                                slidesToShow: 8,
-                            },
-                        },
-                    ]}
-                >
-                    {list.map((item, index) => {
+
+                <div className="flex justify-center">
+                    <div className=""></div>
+                </div>
+                <Carousel autoplay arrows className="arrow_show" slidesToShow={7}>
+                    {listMovies.map((item, index) => {
                         return (
                             <div key={index}>
                                 <Card data={item} />

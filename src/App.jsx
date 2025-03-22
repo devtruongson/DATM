@@ -5,8 +5,11 @@ import CinemaEdit from './pages/admin/Cinemas/CinemaEdit';
 import CinemaList from './pages/admin/Cinemas/CinemaList';
 import Dashboard from './pages/admin/Dashboard';
 // import './App.css'
+import { useDispatch, useSelector } from 'react-redux';
 import 'slick-carousel/slick/slick-theme.css';
 import 'slick-carousel/slick/slick.css';
+import { handleDataVideoPreview } from './app/slices/appSlice';
+import PreviewTrailler from './components/molecules/PrivewTrailler';
 import About from './components/pages/About';
 import BlogCategory from './components/pages/BlogCategory';
 import BlogSingle from './components/pages/BlogSingle';
@@ -23,6 +26,18 @@ import { routes } from './routes';
 import './style.css';
 
 function App() {
+    const { isOpenModalPriviewVideo, url } = useSelector((state) => state.app.dataVideoPreview);
+    const dispatch = useDispatch();
+
+    const handleCancelPreviewVideo = () => {
+        dispatch(
+            handleDataVideoPreview({
+                isOpenModalPriviewVideo: false,
+                url: '',
+            }),
+        );
+    };
+
     return (
         <>
             {/* router admin */}
@@ -48,6 +63,7 @@ function App() {
                 <Route path={routes.movie_single_second} element={<MovieSingleSecond />} />
                 <Route path={routes.movie_single} element={<MovieSingle />} />
             </Routes>
+            <PreviewTrailler isModalOpen={isOpenModalPriviewVideo} url={url} handleCancel={handleCancelPreviewVideo} />
         </>
     );
 }

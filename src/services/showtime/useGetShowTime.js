@@ -5,21 +5,22 @@ import api from '../../libs/axios';
 
 export const GET_TODO_QUERY_KEY = 'communes';
 
-const getShowTimes = async () => {
-    const { data } = await api.get('/showtimes');
+const getTodo = async (payload) => {
+    const { data } = await api.get('/movies', {
+        params: payload,
+    });
     return data;
 };
 
-export const getShowTimesOptions = () =>
+export const getTodoOptions = (data) =>
     queryOptions({
-        queryKey: [GET_TODO_QUERY_KEY],
-        queryFn: () => getShowTimes(),
+        queryKey: [GET_TODO_QUERY_KEY, data],
+        queryFn: () => getTodo(data),
     });
 
-export const useGetShowtimes = ({ queryConfig }) => {
+export const useGetTodo = ({ queryConfig, data }) => {
     return useQuery({
-        ...getShowTimesOptions(),
+        ...getTodoOptions(data),
         ...queryConfig,
-        enabled: true,
     });
 };
