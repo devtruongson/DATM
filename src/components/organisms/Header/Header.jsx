@@ -44,34 +44,34 @@ export default function Header() {
             children: [
                 {
                     label: 'Index - I',
-                    key: 'Index - I',
+                    key: (Math.random() * 10000).toString(),
                 },
                 {
                     type: 'divider',
                 },
                 {
                     label: 'Index - II',
-                    key: 'Index - II',
+                    key: (Math.random() * 10000).toString(),
                 },
                 {
                     type: 'divider',
                 },
                 {
                     label: 'Index - III',
-                    key: 'Index - III',
+                    key: (Math.random() * 10000).toString(),
                 },
                 {
                     type: 'divider',
                 },
                 {
                     label: <Link to={'/film-detail'}>Index - IV</Link>,
-                    key: 'Index - IV',
+                    key: (Math.random() * 10000).toString(),
                 },
             ],
         },
         {
             label: <span className="text-[#fff]">POPULAR MOVIES</span>,
-            key: 'popularMovies',
+            key: (Math.random() * 10000).toString(),
             popupClassName: 'submenu-horizontal',
             children: [
                 {
@@ -90,7 +90,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Bajiro Mastani',
+                            key: (Math.random() * 10000).toString(),
                         },
                         {
                             label: 'Drishyam',
@@ -102,7 +102,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Drishyam',
+                            key: (Math.random() * 10000).toString(),
                         },
                         {
                             label: 'Queen',
@@ -114,7 +114,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Queen',
+                            key: (Math.random() * 10000).toString(),
                         },
                         {
                             label: 'Wanted',
@@ -126,7 +126,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Wanted',
+                            key: (Math.random() * 10000).toString(),
                         },
                         {
                             label: 'Veer',
@@ -138,7 +138,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Veer',
+                            key: (Math.random() * 10000).toString(),
                         },
                         {
                             label: 'Jannat',
@@ -150,7 +150,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Jannat',
+                            key: (Math.random() * 10000).toString(),
                         },
                         {
                             label: 'Baaghi',
@@ -162,7 +162,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Baaghi',
+                            key: (Math.random() * 10000).toString(),
                         },
                         {
                             label: 'Baaghi-2',
@@ -174,7 +174,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Baaghi-2',
+                            key: (Math.random() * 10000).toString(),
                         },
                     ],
                 },
@@ -196,7 +196,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Bajiro Mastani',
+                            key: (Math.random() * 10000).toString(),
                         },
                         {
                             label: 'Drishyam',
@@ -208,7 +208,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Drishyam',
+                            key: (Math.random() * 10000).toString(),
                         },
                         {
                             label: 'Queen',
@@ -220,7 +220,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Queen',
+                            key: (Math.random() * 10000).toString(),
                         },
                         {
                             label: 'Wanted',
@@ -232,7 +232,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Wanted',
+                            key: (Math.random() * 10000).toString(),
                         },
                         {
                             label: 'Veer',
@@ -244,7 +244,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Veer',
+                            key: (Math.random() * 10000).toString(),
                         },
                         {
                             label: 'Jannat',
@@ -256,7 +256,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Jannat',
+                            key: (Math.random() * 10000).toString(),
                         },
                         {
                             label: 'Baaghi',
@@ -268,7 +268,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Baaghi',
+                            key: (Math.random() * 10000).toString(),
                         },
                         {
                             label: 'Baaghi-2',
@@ -280,7 +280,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Baaghi-2',
+                            key: (Math.random() * 10000).toString(),
                         },
                     ],
                 },
@@ -302,7 +302,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Bajiro Mastani',
+                            key: (Math.random() * 10000).toString(),
                         },
                         {
                             label: 'Drishyam',
@@ -314,7 +314,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Drishyam',
+                            key: (Math.random() * 10000).toString(),
                         },
                         {
                             label: 'Queen',
@@ -326,7 +326,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Queen',
+                            key: (Math.random() * 10000).toString(),
                         },
                         {
                             label: 'Wanted',
@@ -338,7 +338,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Wanted',
+                            key: (Math.random() * 10000).toString(),
                         },
                         {
                             label: 'Veer',
@@ -350,7 +350,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Veer',
+                            key: (Math.random() * 10000).toString(),
                         },
                         {
                             label: 'Jannat',
@@ -362,7 +362,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Jannat',
+                            key: (Math.random() * 10000).toString(),
                         },
                         {
                             label: 'Baaghi',
@@ -374,7 +374,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Baaghi',
+                            key: (Math.random() * 10000).toString(),
                         },
                         {
                             label: 'Baaghi-2',
@@ -386,7 +386,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Baaghi-2',
+                            key: (Math.random() * 10000).toString(),
                         },
                     ],
                 },
@@ -408,7 +408,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Bajiro Mastani',
+                            key: (Math.random() * 10000).toString(),
                         },
                         {
                             label: 'Drishyam',
@@ -420,7 +420,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Drishyam',
+                            key: (Math.random() * 10000).toString(),
                         },
                         {
                             label: 'Queen',
@@ -432,7 +432,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Queen',
+                            key: (Math.random() * 10000).toString(),
                         },
                         {
                             label: 'Wanted',
@@ -444,7 +444,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Wanted',
+                            key: (Math.random() * 10000).toString(),
                         },
                         {
                             label: 'Veer',
@@ -456,7 +456,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Veer',
+                            key: (Math.random() * 10000).toString(),
                         },
                         {
                             label: 'Jannat',
@@ -468,7 +468,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Jannat',
+                            key: (Math.random() * 10000).toString(),
                         },
                         {
                             label: 'Baaghi',
@@ -480,7 +480,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Baaghi',
+                            key: (Math.random() * 10000).toString(),
                         },
                         {
                             label: 'Baaghi-2',
@@ -492,7 +492,7 @@ export default function Header() {
                                     }}
                                 ></i>
                             ),
-                            key: 'Baaghi-2',
+                            key: (Math.random() * 10000).toString(),
                         },
                     ],
                 },
@@ -533,7 +533,7 @@ export default function Header() {
                                     </div>
                                 </Carousel>
                             ),
-                            key: 'Bajiro Mastani 1',
+                            key: (Math.random() * 10000).toString(),
                         },
                     ],
                 },
@@ -552,14 +552,14 @@ export default function Header() {
                 },
                 {
                     label: 'Star Jalsha',
-                    key: 'Star Jalsha',
+                    key: (Math.random() * 10000).toString(),
                 },
                 {
                     type: 'divider',
                 },
                 {
                     label: 'Star Jalsha',
-                    key: 'Star Jalsha',
+                    key: (Math.random() * 10000).toString(),
                 },
                 {
                     type: 'divider',
@@ -875,7 +875,7 @@ export default function Header() {
                     )} */}
                 </div>
             </div>
-            <Modal visible={isModalVisible} onCancel={closeModal} footer={null} width={'60vw'} height={'600px'}>
+            <Modal open={isModalVisible} onCancel={closeModal} footer={null} width={'60vw'} height={'600px'}>
                 <div className="p-[30px] min-h-[600px]">
                     <iframe
                         className="rounded-md overflow-hidden"

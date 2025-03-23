@@ -37,8 +37,8 @@ const MovieProDrawer = ({ onClose, open, showModal }) => {
                 onClose={onClose}
                 open={open}
                 width={300}
-                headerStyle={{ borderBottom: 'none', padding: '16px' }}
-                bodyStyle={{ padding: 0 }}
+                // headerStyle={{ borderBottom: 'none', padding: '16px' }}
+                // bodyStyle={{ padding: 0 }}
             >
                 <div className="flex flex-col h-full justify-between">
                     <div>

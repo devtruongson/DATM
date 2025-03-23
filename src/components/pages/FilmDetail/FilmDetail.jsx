@@ -141,19 +141,47 @@ const Home = () => {
     );
 
     const handleBuilderShowtimesForDate = (dataBuider) => {
-        const dataBuilderData = [];
+        let dataBuild = [];
+
         dataBuider.forEach((item) => {
-            const index = dataBuilderData.findIndex((dataItem) => dataItem.date === item.date);
+            const cenimaId = item.screen.cinema.id;
+            const dataItem = {
+                id: cenimaId,
+                name: item.screen.cinema.name,
+                data: [
+                    {
+                        ...item,
+                    },
+                ],
+            };
+
+            const index = dataBuild.findIndex((dataBuildItem) => dataBuildItem.id === cenimaId);
             if (index === -1) {
-                dataBuilderData.push({
-                    date: item.date,
-                    item: [item],
-                });
+                dataBuild.push(dataItem);
             } else {
-                dataBuilderData[index].item.push(item);
+                dataBuild[index].data.push(item);
             }
         });
-        return dataBuilderData;
+
+        dataBuild = dataBuild.map((dataBuildItem) => {
+            const dataNews = [];
+            dataBuildItem.data.forEach((dataNewsItem) => {
+                const value = dataNewsItem.date;
+                const index = dataNews.findIndex((dataBuildItem) => dataBuildItem.date === value);
+                if (index === -1) {
+                    dataNews.push({
+                        date: value,
+                        item: [dataNewsItem],
+                    });
+                } else {
+                    dataNews[index].item.push(dataNewsItem);
+                }
+            });
+            dataBuildItem.data = dataNews;
+            return dataBuildItem;
+        });
+
+        return dataBuild;
     };
 
     return (
@@ -251,30 +279,74 @@ const Home = () => {
                                             style={{ marginBottom: 32 }}
                                             items={handleBuilderShowtimesForDate(dataShowTime).map((item) => {
                                                 return {
-                                                    label: item.date,
-                                                    key: item.date,
+                                                    label: item.name,
+                                                    key: item.id,
                                                     children: (
                                                         <div>
-                                                            <div className="flex gap-4">
-                                                                {item.item.map((itemShowTime, index) => (
-                                                                    <div
-                                                                        key={index}
-                                                                        className="flex border border-gray-200  px-2 py-3 rounded-md flex-col items-center gap-2 justify-center"
-                                                                    >
-                                                                        <p className="text-sm text-center text-gray-500 dark:text-gray-400">
-                                                                            {itemShowTime.start_time?.split(' ')[1]} -{' '}
-                                                                            {itemShowTime.end_time?.split(' ')[1]}
-                                                                        </p>
-                                                                        <p className="text-sm text-center text-gray-500 dark:text-gray-400">
-                                                                            Dạp {itemShowTime?.screen?.cinema?.name} -
-                                                                            Phòng {itemShowTime?.screen?.name}
-                                                                        </p>
-                                                                        <Button type="primary" size="small">
-                                                                            Mua ngay
-                                                                        </Button>
-                                                                    </div>
-                                                                ))}
-                                                            </div>
+                                                            <Tabs
+                                                                type="card"
+                                                                defaultActiveKey={dataShowTime[0].date}
+                                                                size={'large'}
+                                                                style={{ marginBottom: 32 }}
+                                                                items={item.data.map((itemChild) => {
+                                                                    return {
+                                                                        label: itemChild.date,
+                                                                        key: itemChild.date,
+                                                                        children: (
+                                                                            <div>
+                                                                                <div className="flex gap-4">
+                                                                                    <div className="flex gap-4">
+                                                                                        {itemChild.item.map(
+                                                                                            (itemShowTime, index) => (
+                                                                                                <div
+                                                                                                    key={index}
+                                                                                                    className="flex border border-gray-200  px-2 py-3 rounded-md flex-col items-center gap-2 justify-center"
+                                                                                                >
+                                                                                                    <p className="text-sm text-center text-gray-500 dark:text-gray-400">
+                                                                                                        {
+                                                                                                            itemShowTime.start_time?.split(
+                                                                                                                ' ',
+                                                                                                            )[1]
+                                                                                                        }{' '}
+                                                                                                        -{' '}
+                                                                                                        {
+                                                                                                            itemShowTime.end_time?.split(
+                                                                                                                ' ',
+                                                                                                            )[1]
+                                                                                                        }
+                                                                                                    </p>
+                                                                                                    <p className="text-sm text-center text-gray-500 dark:text-gray-400">
+                                                                                                        Dạp{' '}
+                                                                                                        {
+                                                                                                            itemShowTime
+                                                                                                                ?.screen
+                                                                                                                ?.cinema
+                                                                                                                ?.name
+                                                                                                        }{' '}
+                                                                                                        - Phòng{' '}
+                                                                                                        {
+                                                                                                            itemShowTime
+                                                                                                                ?.screen
+                                                                                                                ?.name
+                                                                                                        }
+                                                                                                        gi
+                                                                                                    </p>
+                                                                                                    <Button
+                                                                                                        type="primary"
+                                                                                                        size="small"
+                                                                                                    >
+                                                                                                        Mua ngay
+                                                                                                    </Button>
+                                                                                                </div>
+                                                                                            ),
+                                                                                        )}
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        ),
+                                                                    };
+                                                                })}
+                                                            />
                                                         </div>
                                                     ),
                                                 };

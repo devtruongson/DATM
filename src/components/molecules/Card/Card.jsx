@@ -38,7 +38,7 @@ const Card = ({ data }) => {
                         View Trailer
                     </button>
                     <button
-                        onClick={() => (window.location.href = `/film_detail/${data.id}`)}
+                        onClick={() => (window.location.href = `/movie_booking/${data.id}`)}
                         className="px-6 py-3 border-[1px] border-[#ff4444] text-white rounded-lg transform translate-x-32 group-hover:translate-x-0 transition-all duration-500 hover:bg-[#ff4444]"
                     >
                         View Details
