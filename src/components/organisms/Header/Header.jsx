@@ -1,6 +1,10 @@
-import { Carousel, Menu, Modal, Select } from 'antd';
+import { Carousel, Menu, Modal, Popover, Select } from 'antd';
 import { Fragment, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import { handleLoginUserSuccess, handleLogoutUser } from '../../../app/slices/appSlice';
+import { useLoginUser } from '../../../services/auth/login';
 import LoginModal from '../ModalAuth';
 import MovieProDrawer from '../ModalNav';
 
@@ -797,9 +801,78 @@ export default function Header() {
         setIsModalOpen(false);
     };
 
+    const dispatch = useDispatch();
+
+    const loginUserMutation = useLoginUser({
+        mutationConfig: {
+            onSuccess(data) {
+                dispatch(
+                    handleLoginUserSuccess({
+                        user: data.user,
+                        tokens: {
+                            accessToken: data.access_token,
+                            refreshToken: data.refresh_token,
+                        },
+                    }),
+                );
+                Swal.fire({
+                    icon: 'success',
+                    text: 'Chúc mừng bạn đã đăng nhập thành công',
+                }).then(() => {
+                    window.location.href = '/';
+                });
+            },
+            onError: () => {
+                alert('Có lỗi xảy ra vui lòng đăng nhập lại');
+            },
+        },
+    });
+
     const onFinish = (values) => {
-        console.log('Success:', values);
+        loginUserMutation.mutate(values);
     };
+
+    const { isLoginIn, user } = useSelector((state) => state.app.auth);
+    const contentUserLogin = (
+        <div>
+            <ul>
+                <li
+                    style={{
+                        listStyleType: 'none',
+                        paddingInlineStart: 0,
+                        fontSize: '16px',
+                        padding: '6px 0',
+                        cursor: 'pointer',
+                    }}
+                >
+                    Xem tài khoản
+                </li>
+                <li
+                    style={{
+                        listStyleType: 'none',
+                        paddingInlineStart: 0,
+                        fontSize: '16px',
+                        padding: '6px 0',
+                        cursor: 'pointer',
+                    }}
+                    onClick={() => {
+                        Swal.fire({
+                            icon: 'info',
+                            text: 'Bạn chắc chắn muốn đăng xuất?',
+                            showConfirmButton: true,
+                            showCancelButton: true,
+                        }).then((res) => {
+                            if (res.isConfirmed) {
+                                dispatch(handleLogoutUser());
+                            }
+                        });
+                    }}
+                >
+                    Đăng xuất
+                </li>
+            </ul>
+        </div>
+    );
 
     return (
         <header className="bg-[#ff4444] h-[100px] flex items-center">
@@ -841,12 +914,42 @@ export default function Header() {
                                 <i className="bi bi-search-heart"></i>
                             </button>
                         </div>
-                        <button
-                            onClick={() => setIsModalOpen(true)}
-                            className="bg-[#000] text-[#fff] h-[50px] w-[180px] rounded-[10px] lg:block hidden"
-                        >
-                            sign up
-                        </button>
+                        {!isLoginIn && !user ? (
+                            <button
+                                onClick={() => setIsModalOpen(true)}
+                                className="bg-[#000] text-[#fff] h-[50px] w-[180px] rounded-[10px] lg:block hidden"
+                            >
+                                sign up
+                            </button>
+                        ) : (
+                            <Popover content={contentUserLogin} title="Thông tin tài khoản">
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        gap: 10,
+                                        fontWeight: 600,
+                                        color: '#fff',
+                                        background: 'rgba(0,0,0,0.2)',
+                                        padding: '6px 20px',
+                                        borderRadius: 10,
+                                        cursor: 'pointer',
+                                    }}
+                                >
+                                    <img
+                                        style={{
+                                            borderRadius: '50%',
+                                            width: 40,
+                                            height: 40,
+                                        }}
+                                        src={user[0]?.avatar}
+                                        alt="hình ảnh người dùng"
+                                    />
+                                    <p>Welcome {user[0]?.name}</p>
+                                </div>
+                            </Popover>
+                        )}
                     </Fragment>
 
                     <button

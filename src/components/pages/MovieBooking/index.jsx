@@ -1,10 +1,11 @@
-import { Empty, Spin } from 'antd';
+import { Empty, Select, Spin } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { handleBuildShowTimes } from '../../../helpers/handleFilterShowtimes';
 import { handleReBuildGenres } from '../../../helpers/handleReBuildGenres';
 import { useGetAllGenres } from '../../../services/genres/getAllGenres';
 import { useGetDetailMovie } from '../../../services/movie/getMovieDetail';
+import { useGetListProvince } from '../../../services/province/getAllProvince';
 import { useGetShowtimes } from '../../../services/todo/useGetTodo';
 import SearchInput from '../../atoms/Input/SearchInput';
 import LabelCommon from '../../atoms/LabelCommon';
@@ -174,6 +175,10 @@ const MovieBooking = () => {
             }) || [],
         [dataGenres],
     );
+    const { data: dataProvinceQuery } = useGetListProvince({});
+    const dataProvince = useMemo(() => (dataProvinceQuery?.data ? dataProvinceQuery?.data : []), [dataProvinceQuery]);
+
+    console.log(dataProvince);
 
     return (
         <MainTemplate>
@@ -201,11 +206,31 @@ const MovieBooking = () => {
                         </div>
                     </>
                 ) : dataShowTime?.length > 0 ? (
-                    <ListCalendar
-                        currentDate={currentDate}
-                        setCurrentDate={setCurrentDate}
-                        list={handleBuilderShowtimesForDate(dataShowTime)}
-                    />
+                    <>
+                        <ListCalendar
+                            currentDate={currentDate}
+                            setCurrentDate={setCurrentDate}
+                            list={handleBuilderShowtimesForDate(dataShowTime)}
+                        />
+                        <ContainerWapper>
+                            <Select
+                                style={{ width: 200, marginTop: 30 }}
+                                defaultValue={null}
+                                options={[
+                                    {
+                                        value: null,
+                                        label: 'Tất cả khu vực',
+                                    },
+                                    ...dataProvince.map((item) => {
+                                        return {
+                                            value: item.id,
+                                            label: item.name,
+                                        };
+                                    }),
+                                ]}
+                            />
+                        </ContainerWapper>
+                    </>
                 ) : (
                     <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                 )}
