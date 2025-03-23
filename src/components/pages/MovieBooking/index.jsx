@@ -145,6 +145,7 @@ const MovieBooking = () => {
                     dataNews.push({
                         cinema_id: value,
                         label: dataNewsItem.screen.cinema.name,
+                        province_id: dataNewsItem.screen.cinema.province_id,
                         item: [dataNewsItem],
                     });
                 } else {
@@ -158,15 +159,6 @@ const MovieBooking = () => {
         return dataBuild;
     };
 
-    useEffect(() => {
-        if (dataShowTime) {
-            const data = handleBuilderShowtimesForDate(dataShowTime);
-            if (data.length > 0) {
-                setCurrentDate(data[0].date);
-            }
-        }
-    }, [dataShowTime]);
-
     const { data: dataGenres } = useGetAllGenres({});
     const genres = useMemo(
         () =>
@@ -178,7 +170,40 @@ const MovieBooking = () => {
     const { data: dataProvinceQuery } = useGetListProvince({});
     const dataProvince = useMemo(() => (dataProvinceQuery?.data ? dataProvinceQuery?.data : []), [dataProvinceQuery]);
 
-    console.log(dataProvince);
+    const [filterLocation, setFilterLocation] = useState(null);
+
+    const handleFilterLocation = (value) => {
+        setFilterLocation(value);
+    };
+
+    useEffect(() => {
+        if (dataShowTime && dataShowTime.length > 0) {
+            if (!filterLocation) {
+                const data = handleBuilderShowtimesForDate(dataShowTime);
+                if (data.length > 0) {
+                    setDataShowTimeRender(data);
+                }
+            } else {
+                const data = handleBuilderShowtimesForDate(dataShowTime).map((item) => {
+                    item.data = item.data.filter((itemChild) => itemChild.province_id === filterLocation);
+                    return item;
+                });
+                setDataShowTimeRender(data);
+            }
+        }
+    }, [filterLocation, dataShowTime]);
+
+    const [dataShowTimeRender, setDataShowTimeRender] = useState([]);
+
+    useEffect(() => {
+        if (dataShowTime && dataShowTime.length > 0) {
+            const data = handleBuilderShowtimesForDate(dataShowTime);
+            if (data.length > 0) {
+                setCurrentDate(data[0].date);
+                setDataShowTimeRender(data);
+            }
+        }
+    }, [dataShowTime]);
 
     return (
         <MainTemplate>
@@ -210,12 +235,13 @@ const MovieBooking = () => {
                         <ListCalendar
                             currentDate={currentDate}
                             setCurrentDate={setCurrentDate}
-                            list={handleBuilderShowtimesForDate(dataShowTime)}
+                            list={dataShowTimeRender}
                         />
                         <ContainerWapper>
                             <Select
                                 style={{ width: 200, marginTop: 30 }}
-                                defaultValue={null}
+                                value={filterLocation}
+                                onChange={handleFilterLocation}
                                 options={[
                                     {
                                         value: null,
@@ -251,7 +277,7 @@ const MovieBooking = () => {
                             </>
                         ) : dataShowTime.length ? (
                             currentDate &&
-                            handleBuilderShowtimesForDate(dataShowTime)
+                            dataShowTimeRender
                                 .find((itemFind) => itemFind.date === currentDate)
                                 .data.map((item, index) => (
                                     <Cinemas key={index} data={item} filmId={id} currentDate={currentDate} />
