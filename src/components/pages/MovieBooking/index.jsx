@@ -117,7 +117,6 @@ const MovieBooking = () => {
         dataBuider.forEach((item) => {
             const date = item.date;
             const isExp = new Date(item.start_time).getTime() < Date.now();
-
             item.isExp = isExp;
             const dataItem = {
                 id: item.id,
@@ -155,7 +154,7 @@ const MovieBooking = () => {
             dataBuildItem.data = dataNews;
             return dataBuildItem;
         });
-
+        dataBuild.sort((a, b) => new Date(a.date) - new Date(b.date));
         return dataBuild;
     };
 
@@ -204,6 +203,8 @@ const MovieBooking = () => {
             }
         }
     }, [dataShowTime]);
+
+    console.log(dataShowTimeRender);
 
     return (
         <MainTemplate>
