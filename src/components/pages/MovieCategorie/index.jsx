@@ -48,8 +48,6 @@ const MovieCate = () => {
 
     const listMoviesArr = useMemo(() => (dataMovies?.data ? dataMovies.data : []), [dataMovies]);
 
-    console.log(listMoviesArr);
-
     return (
         <MainTemplate>
             <ContainerWapper>
