@@ -1,6 +1,7 @@
 import { Button, Input, Modal, Select, Table } from 'antd';
 import { useMemo, useState } from 'react';
 import { useGetTicket } from '../../../services/auth/getTicket';
+import TableAction from './TicketModal';
 
 const { Option } = Select;
 
@@ -65,6 +66,12 @@ const TicketTable = () => {
             dataIndex: 'status',
             key: 'status',
             render: (text) => <span className={text === 'paid' ? 'text-green-500' : 'text-yellow-500'}>{text}</span>,
+        },
+        {
+            title: 'Hành động',
+            render: (record) => {
+                return <TableAction record={record} />;
+            },
         },
     ];
 

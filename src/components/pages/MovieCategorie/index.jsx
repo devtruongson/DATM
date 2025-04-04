@@ -4,11 +4,11 @@ import { handleReBuildGenres } from '../../../helpers/handleReBuildGenres';
 import { handleBuilderMovies } from '../../../helpers/handleReBuildMovies';
 import { useGetAllGenres } from '../../../services/genres/getAllGenres';
 import { useGetAllMovies } from '../../../services/movie/useGetOneMovie';
-import SearchInput from '../../atoms/Input/SearchInput';
 import LabelCommon from '../../atoms/LabelCommon';
 import Card from '../../molecules/Card/Card';
 import ListCategories from '../../molecules/ListCategories';
 import ListFilm from '../../organisms/ListFilm';
+import ProductSearchPopover from '../../organisms/ProductSearchPopover';
 import ContainerWapper from '../../templates/ContainerWapper';
 import MainTemplate from '../../templates/MainTemplate';
 import './styles.css';
@@ -45,6 +45,10 @@ const MovieCate = () => {
                 .slice(0, 10) || [],
         [dataMovies],
     );
+
+    const listMoviesArr = useMemo(() => (dataMovies?.data ? dataMovies.data : []), [dataMovies]);
+
+    console.log(listMoviesArr);
 
     return (
         <MainTemplate>
@@ -88,7 +92,7 @@ const MovieCate = () => {
                         className="lg:w-[24%] w-[95%] rounded-[10px] p-[24px] bg-white"
                         style={{ boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px' }}
                     >
-                        <SearchInput />
+                        <ProductSearchPopover products={listMoviesArr} />
                         <LabelCommon label={'browse title'} />
 
                         <ListCategories data={genres} />
