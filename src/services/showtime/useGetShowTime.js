@@ -3,24 +3,24 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import api from '../../libs/axios';
 
-export const GET_TODO_QUERY_KEY = 'communes';
+export const GET_SHOW_TIME_QUERY_KEY = 'SHOW_TIME';
 
-const getTodo = async (payload) => {
+const getshowTime = async (payload) => {
     const { data } = await api.get('/movies', {
         params: payload,
     });
     return data;
 };
 
-export const getTodoOptions = (data) =>
+export const getshowTimeOptions = (data) =>
     queryOptions({
-        queryKey: [GET_TODO_QUERY_KEY, data],
-        queryFn: () => getTodo(data),
+        queryKey: [GET_SHOW_TIME_QUERY_KEY, data],
+        queryFn: () => getshowTime(data),
     });
 
-export const useGetTodo = ({ queryConfig, data }) => {
+export const useGetShowTimes = ({ queryConfig, data }) => {
     return useQuery({
-        ...getTodoOptions(data),
+        ...getshowTimeOptions(data),
         ...queryConfig,
     });
 };

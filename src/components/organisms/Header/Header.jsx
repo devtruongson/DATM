@@ -3,9 +3,7 @@ import { Fragment, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { handleLoginUserSuccess, handleLogoutUser } from '../../../app/slices/appSlice';
-import { useLoginUser } from '../../../services/auth/login';
-import LoginModal from '../ModalAuth';
+import { handleLogoutUser, handleToggleModalAuth } from '../../../app/slices/appSlice';
 import MovieProDrawer from '../ModalNav';
 
 export default function Header() {
@@ -785,7 +783,6 @@ export default function Header() {
         },
     ];
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
     // const [isMenuOpenMobile, setIsMenuOpenMobile] = useState(false);
     const [open, setOpen] = useState(false);
 
@@ -797,40 +794,7 @@ export default function Header() {
         setOpen(false);
     };
 
-    const handleCancel = () => {
-        setIsModalOpen(false);
-    };
-
     const dispatch = useDispatch();
-
-    const loginUserMutation = useLoginUser({
-        mutationConfig: {
-            onSuccess(data) {
-                dispatch(
-                    handleLoginUserSuccess({
-                        user: data.user,
-                        tokens: {
-                            accessToken: data.access_token,
-                            refreshToken: data.refresh_token,
-                        },
-                    }),
-                );
-                Swal.fire({
-                    icon: 'success',
-                    text: 'Chúc mừng bạn đã đăng nhập thành công',
-                }).then(() => {
-                    window.location.href = '/';
-                });
-            },
-            onError: () => {
-                alert('Có lỗi xảy ra vui lòng đăng nhập lại');
-            },
-        },
-    });
-
-    const onFinish = (values) => {
-        loginUserMutation.mutate(values);
-    };
 
     const { isLoginIn, user } = useSelector((state) => state.app.auth);
     const contentUserLogin = (
@@ -843,6 +807,9 @@ export default function Header() {
                         fontSize: '16px',
                         padding: '6px 0',
                         cursor: 'pointer',
+                    }}
+                    onClick={() => {
+                        window.location.href = '/me';
                     }}
                 >
                     Xem tài khoản
@@ -916,7 +883,7 @@ export default function Header() {
                         </div>
                         {!isLoginIn && !user ? (
                             <button
-                                onClick={() => setIsModalOpen(true)}
+                                onClick={() => dispatch(handleToggleModalAuth())}
                                 className="bg-[#000] text-[#fff] h-[50px] w-[180px] rounded-[10px] lg:block hidden"
                             >
                                 sign up
@@ -993,13 +960,7 @@ export default function Header() {
                     ></iframe>
                 </div>
             </Modal>
-            <LoginModal
-                handleCancel={handleCancel}
-                isModalOpen={isModalOpen}
-                onFinish={onFinish}
-                setIsModalOpen={setIsModalOpen}
-            />
-            <MovieProDrawer onClose={onClose} open={open} showModal={() => setIsModalOpen(true)} />
+            <MovieProDrawer onClose={onClose} open={open} showModal={() => dispatch(handleToggleModalAuth())} />
         </header>
     );
 }

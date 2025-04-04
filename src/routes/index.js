@@ -11,4 +11,6 @@ export const routes = {
     movie_category: '/', // eg: http://localhost:5173/movie_category
     movie_single_second: '/movie_single_second', // eg: http://localhost:5173/movie_single_second
     movie_single: '/movie_single', // eg: http://localhost:5173/movie_single
+    me: '/me', // eg: http://localhost:5173/movie_single,
+    forgotPassword: '/forgot-password',
 };

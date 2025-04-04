@@ -12,7 +12,9 @@ const initialState = {
             access_token: null,
             refresh_token: null,
         },
+        isOpenModal: false,
     },
+    payment: {},
 };
 
 export const appSlice = createSlice({
@@ -26,8 +28,8 @@ export const appSlice = createSlice({
         handleLoginUserSuccess(state, actions) {
             state.auth.isLoginIn = true;
             state.auth.user = actions.payload.user;
-            state.auth.tokens.access_token = actions.payload.tokens.access_token;
-            state.auth.tokens.refresh_token = actions.payload.tokens.refresh_token;
+            state.auth.tokens.access_token = actions.payload.tokens.accessToken;
+            state.auth.tokens.refresh_token = actions.payload.tokens.refreshToken;
         },
         handleLogoutUser(state) {
             state.auth.isLoginIn = false;
@@ -39,11 +41,18 @@ export const appSlice = createSlice({
             state.auth.tokens.access_token = actions.payload.access_token;
             state.auth.tokens.refresh_token = actions.payload.refresh_token;
         },
+        handleToggleModalAuth(state, action) {
+            state.auth.isOpenModal = action.payload ? action.payload : !state.auth.isOpenModal;
+        },
     },
 });
 
-// Action creators are generated for each case reducer function
-export const { handleDataVideoPreview, handleLoginUserSuccess, handleLogoutUser, handleRefreshTokenSuccess } =
-    appSlice.actions;
+export const {
+    handleDataVideoPreview,
+    handleLoginUserSuccess,
+    handleLogoutUser,
+    handleRefreshTokenSuccess,
+    handleToggleModalAuth,
+} = appSlice.actions;
 
 export default appSlice.reducer;

@@ -1,11 +1,14 @@
 /* eslint-disable react/prop-types */
 
 import { HeartOutlined } from '@ant-design/icons';
+import { Tooltip } from 'antd';
 import { useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import bill from '../../../../public/images/content/bill.png';
 import fastFood from '../../../../public/images/content/fast-food.png';
 import ticket from '../../../../public/images/content/ticket.png';
+import { handleToggleModalAuth } from '../../../app/slices/appSlice';
 import { routes } from '../../../routes';
 const icons = ['fast-food', 'ticket'];
 
@@ -22,12 +25,15 @@ export default Cinemas;
 const CinemaItem = ({ cinema, filmId, currentDate }) => {
     const navigate = useNavigate();
     const handleNavigate = useCallback(
-        (time) => {
+        (start_time, end_time, showtime) => {
             navigate(
-                routes.seat_booking.replace(':id', `${cinema?.id}?filmId=${filmId}&date=${currentDate}&time=${time}`),
+                routes.seat_booking.replace(
+                    ':id',
+                    `${cinema?.screen_id}?filmId=${filmId}&date=${currentDate}&start_time=${start_time}&end_time=${end_time}&showtime=${showtime}`,
+                ),
             );
         },
-        [cinema?.id, currentDate, filmId, navigate],
+        [cinema?.screen_id, currentDate, filmId, navigate],
     );
 
     const handleGetIcon = (type) => {
@@ -37,7 +43,11 @@ const CinemaItem = ({ cinema, filmId, currentDate }) => {
         return '';
     };
 
-    console.log(cinema);
+    const dispatch = useDispatch();
+    const { isLoginIn } = useSelector((state) => state.app.auth);
+    const handleToggle = () => {
+        dispatch(handleToggleModalAuth());
+    };
 
     return (
         <div className="flex justify-start items-start">
@@ -64,13 +74,25 @@ const CinemaItem = ({ cinema, filmId, currentDate }) => {
                     {cinema?.item?.length
                         ? cinema?.item?.map((item, index) => {
                               return (
-                                  <div
-                                      key={index}
-                                      className=" px-[8px] py-[4px] text-[14px] border-solid border-[1px] border-[#ccc] rounded-[4px] cursor-pointer hover:bg-[#ff4444] hover:text-white"
-                                      onClick={() => handleNavigate(item?.clock + item?.period)}
-                                  >
-                                      {item?.start_time.split(' ')[1]} - {item?.end_time.split(' ')[1]}
-                                  </div>
+                                  <Tooltip title={item.isExp ? 'Đã qua giờ chiếu' : ''} key={index}>
+                                      <div
+                                          className={`${
+                                              item.isExp
+                                                  ? 'bg-[#ddd] text-white px-4 py-2 rounded cursor-not-allowed'
+                                                  : 'px-[8px] py-[4px] text-[14px] border-solid border-[1px] border-[#ccc] rounded-[4px] cursor-pointer hover:bg-[#ff4444] hover:text-white'
+                                          }`}
+                                          onClick={() => {
+                                              if (item.isExp) return;
+                                              if (isLoginIn) {
+                                                  handleNavigate(item?.start_time, item?.end_time, item.id);
+                                              } else {
+                                                  handleToggle();
+                                              }
+                                          }}
+                                      >
+                                          {item?.start_time} - {item?.end_time}
+                                      </div>
+                                  </Tooltip>
                               );
                           })
                         : null}

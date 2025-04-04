@@ -6,10 +6,7 @@ import { handleReBuildGenres } from '../../../helpers/handleReBuildGenres';
 import { useGetAllGenres } from '../../../services/genres/getAllGenres';
 import { useGetDetailMovie } from '../../../services/movie/getMovieDetail';
 import { useGetListProvince } from '../../../services/province/getAllProvince';
-import { useGetShowtimes } from '../../../services/todo/useGetTodo';
-import SearchInput from '../../atoms/Input/SearchInput';
-import LabelCommon from '../../atoms/LabelCommon';
-import ListCategories from '../../molecules/ListCategories';
+import { useGetShowtimes } from '../../../services/showtime/getShowTimes';
 import Cinemas from '../../organisms/Cinemas';
 import ListCalendar from '../../organisms/ListCalendar/ListCalendar';
 import Preview from '../../organisms/Preview';
@@ -35,26 +32,30 @@ const MovieBooking = () => {
     );
 
     const handleBuilderShowtimesForDate = (dataBuider) => {
+        console.log(dataBuider);
         let dataBuild = [];
-
         dataBuider.forEach((item) => {
             const date = item.date;
-            const isExp = new Date(item.start_time).getTime() < Date.now();
-            item.isExp = isExp;
-            const dataItem = {
-                id: item.id,
-                date: item.date,
-                data: [
-                    {
-                        ...item,
-                    },
-                ],
-            };
-            const index = dataBuild.findIndex((dataBuildItem) => dataBuildItem.date === date);
-            if (index === -1) {
-                dataBuild.push(dataItem);
-            } else {
-                dataBuild[index].data.push(item);
+            const inputDateTime = new Date(`${date}T${item.start_time}:00`).getTime();
+            const isExp = inputDateTime < Date.now();
+            const isExpDate = new Date(date).getTime() < new Date().getTime();
+            if (!isExpDate) {
+                item.isExp = isExp;
+                const dataItem = {
+                    id: item.id,
+                    date: item.date,
+                    data: [
+                        {
+                            ...item,
+                        },
+                    ],
+                };
+                const index = dataBuild.findIndex((dataBuildItem) => dataBuildItem.date === date);
+                if (index === -1) {
+                    dataBuild.push(dataItem);
+                } else {
+                    dataBuild[index].data.push(item);
+                }
             }
         });
 
@@ -68,6 +69,7 @@ const MovieBooking = () => {
                         cinema_id: value,
                         label: dataNewsItem.screen.cinema.name,
                         province_id: dataNewsItem.screen.cinema.province_id,
+                        screen_id: dataNewsItem.screen.id,
                         item: [dataNewsItem],
                     });
                 } else {
@@ -194,7 +196,7 @@ const MovieBooking = () => {
             <ContainerWapper>
                 <div className="flex lg:flex-row flex-col justify-between lg:items-start items-center mt-[40px] lg:gap-0 gap-[20px]">
                     <div
-                        className="lg:w-[70%] w-[95%] rounded-[10px] overflow-hidden bg-white"
+                        className="lg:w-[100%] w-[95%] rounded-[10px] overflow-hidden bg-white"
                         style={{ boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px' }}
                     >
                         {isLoadingShowTimes ? (
@@ -204,7 +206,7 @@ const MovieBooking = () => {
                                     <p>Đang tải danh sách phòng vé</p>
                                 </div>
                             </>
-                        ) : dataShowTime.length ? (
+                        ) : dataShowTimeRender.length > 0 ? (
                             currentDate &&
                             dataShowTimeRender
                                 .find((itemFind) => itemFind.date === currentDate)
@@ -215,7 +217,7 @@ const MovieBooking = () => {
                             <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                         )}
                     </div>
-
+                    {/* 
                     <div
                         className="lg:w-[28%] w-[95%] rounded-[10px] p-[24px] bg-white"
                         style={{ boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px' }}
@@ -224,7 +226,7 @@ const MovieBooking = () => {
                         <LabelCommon label={'browse title'} />
 
                         <ListCategories data={genres} />
-                    </div>
+                    </div> */}
                 </div>
             </ContainerWapper>
         </MainTemplate>
