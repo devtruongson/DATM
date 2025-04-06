@@ -10,6 +10,7 @@ import { handleToggleModalAuth } from '../../../app/slices/appSlice';
 import { formatTime } from '../../../helpers/formatTime';
 import { formatVND } from '../../../helpers/formatVND';
 import { handleBuilderMovies } from '../../../helpers/handleReBuildMovies';
+import axios from '../../../libs/axios';
 import { routes } from '../../../routes';
 import { useGetMovie } from '../../../services/movie/useGetMovie';
 import { useGetAllProduct } from '../../../services/product/getAllProduct';
@@ -126,7 +127,30 @@ const SeatBooking = () => {
     const createOrderMutation = useCreateOrder({
         mutationConfig: {
             onSuccess(data) {
-                window.location.href = data.payment_url;
+                const popup = window.open(data.payment_url, 'Thanh toán', 'width=600,height=700');
+
+                if (!popup) {
+                    Swal.fire({
+                        icon: 'warning',
+                        text: 'Trình duyệt đang chặn popup. Hãy tắt chặn popup để tiếp tục thanh toán!',
+                    });
+                    return;
+                }
+
+                setInterval(() => {
+                    axios.get('/tickets').then((res) => {
+                        const { data } = res.data;
+                        if (data[0]?.status === 'paid') {
+                            popup.close();
+                            Swal.fire({
+                                icon: 'success',
+                                text: 'Đặt vé thành công!',
+                            }).then(() => {
+                                window.location.href = `/confirmation-screen?id=${data[0]?.ticket_id}`;
+                            });
+                        }
+                    });
+                }, 1000);
             },
             onError: () => {
                 Swal.fire({

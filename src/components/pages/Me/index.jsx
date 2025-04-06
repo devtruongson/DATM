@@ -29,7 +29,15 @@ const ProfileView = () => {
                     className="w-full shadow-lg"
                     cover={
                         <div className="!flex justify-center mt-6">
-                            <Avatar size={100} src={avatar} icon={!avatar && <UserOutlined />} />
+                            <Avatar
+                                size={100}
+                                src={
+                                    avatar == 'http://filmgo.io.vn/images/avatars/default.jpg'
+                                        ? 'https://static.thenounproject.com/png/4154905-200.png'
+                                        : avatar
+                                }
+                                icon={!avatar && <UserOutlined />}
+                            />
                         </div>
                     }
                 >

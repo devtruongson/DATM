@@ -910,7 +910,11 @@ export default function Header() {
                                             width: 40,
                                             height: 40,
                                         }}
-                                        src={user[0]?.avatar}
+                                        src={
+                                            user[0]?.avatar == 'http://filmgo.io.vn/images/avatars/default.jpg'
+                                                ? 'https://static.thenounproject.com/png/4154905-200.png'
+                                                : user[0]?.avatar
+                                        }
                                         alt="hình ảnh người dùng"
                                     />
                                     <p>Welcome {user[0]?.name}</p>

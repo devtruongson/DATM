@@ -1,10 +1,12 @@
 import { CloseOutlined, FacebookFilled, GoogleOutlined } from '@ant-design/icons';
 import { Button, DatePicker, Divider, Form, Input, Modal } from 'antd';
 import axios from 'axios';
-import { useState } from 'react';
+import firebase from 'firebase/compat/app';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Swal from 'sweetalert2';
 import { handleLoginUserSuccess, handleToggleModalAuth } from '../../../app/slices/appSlice';
+import firebaseConfig from '../../../helpers/firebase';
 import { useLoginUser } from '../../../services/auth/login';
 import { useRegisterUser } from '../../../services/auth/register';
 
@@ -13,6 +15,7 @@ const LoginModal = () => {
     const dispatch = useDispatch();
     const [isLogin, setIsLogin] = useState(true);
     const [form] = Form.useForm();
+    const [userFireBase, setUserFireBase] = useState(false);
 
     const handleToggle = () => {
         dispatch(handleToggleModalAuth());
@@ -46,7 +49,10 @@ const LoginModal = () => {
                 });
             },
             onError: () => {
-                alert('Có lỗi xảy ra vui lòng đăng nhập lại');
+                Swal.fire({
+                    icon: 'info',
+                    text: 'Email của bạn chưa được kích hoạt vui lòng kiểm tra email',
+                });
             },
         },
     });
@@ -81,11 +87,43 @@ const LoginModal = () => {
         form.resetFields();
     };
 
-    const handleLoginGoogle = () => {
-        axios.get('http://filmgo.io.vn/api/auth/google/url').then((res) => {
-            window.location.href = res.data.url;
+    const provider = firebaseConfig();
+
+    useEffect(() => {
+        firebase.auth().signOut();
+        if (!userFireBase) {
+            firebase.auth().signOut();
+            return;
+        }
+        const LoginFirebase = firebase.auth().onAuthStateChanged(async (user) => {
+            if (!user) {
+                return;
+            }
+            console.log(user);
+            let dataBuider = {
+                name: user.displayName,
+                email: user.email,
+                password: 'loginGooogle',
+                confirm_password: 'loginGooogle',
+                phone: '0987654321',
+                address: 'Đang cập nhật',
+                birthday: '2025-04-03',
+            };
+
+            try {
+                const res = await axios.post('http://filmgo.io.vn/api/auth/register', dataBuider);
+                Swal.fire({
+                    icon: 'info',
+                    text: 'Email của bạn chưa được kích hoạt vui lòng kiểm tra email',
+                });
+            } catch (error) {
+                loginUserMutation.mutate(dataBuider);
+            }
         });
-    };
+
+        return () => LoginFirebase();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [userFireBase]);
 
     return (
         <div>
@@ -146,7 +184,10 @@ const LoginModal = () => {
 
                         <Button
                             className="w-full mb-4 h-10 bg-white border flex items-center justify-center"
-                            onClick={handleLoginGoogle}
+                            onClick={() => {
+                                firebase.auth().signInWithPopup(provider.googleAuth);
+                                setUserFireBase(true);
+                            }}
                         >
                             <GoogleOutlined className="mr-2" /> Connect With Google
                         </Button>
