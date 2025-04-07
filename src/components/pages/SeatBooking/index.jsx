@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
-import { DownOutlined, LoadingOutlined } from '@ant-design/icons';
-import { Button, Card, Col, Descriptions, Modal, Popover, Row, Spin } from 'antd';
+import { CopyOutlined, DownOutlined, LoadingOutlined } from '@ant-design/icons';
+import { Badge, Button, Card, Col, Descriptions, List, message, Modal, Popover, Row, Spin } from 'antd';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -34,6 +34,20 @@ const SeatBooking = () => {
     const { data: screenData } = useGetScreen({ id: id });
     const [isModalCheckOut, setIsModalCheckOut] = useState(false);
     const movie = useMemo(() => (movieData?.data ? handleBuilderMovies(movieData?.data) : null), [movieData]);
+    const [promoCode, setPromoCode] = useState([]);
+
+    useEffect(() => {
+        const _fetch = async () => {
+            const { data } = await axios.get(`/promocodes`);
+            if (data) {
+                setPromoCode(data?.data);
+            }
+        };
+
+        _fetch();
+    }, []);
+
+    console.log(promoCode);
 
     const formatDate = useMemo(() => {
         if (!showTimeData?.data?.date) return '';
@@ -161,7 +175,7 @@ const SeatBooking = () => {
         },
     });
 
-    const handleCreateOrder = (dataOrder) => {
+    const handleCreateOrder = (dataOrder, discount = '') => {
         const formData = new FormData();
         formData.append('showtime_id', queryParams?.showtime);
         booking.forEach((item) => {
@@ -172,11 +186,15 @@ const SeatBooking = () => {
             formData.append(`products[${index}][quantity]`, item.quantity);
         });
         formData.append('payment_method_id', 1);
+        const id = promoCode.find((item) => item.code === discount)?.id;
+        if (id) {
+            formData.append('promo_code_id', id);
+        }
         createOrderMutation.mutate(formData);
     };
 
     return (
-        <div className="w-[100%] text-[#ffffff61]">
+        <div className="w-[100%] text-[#ffffff61] pb-10">
             <div className="bg-[#2B2D3D] w-[100%] sm:h-[120px] h-[300px] ">
                 <ContainerWapper>
                     <div className="flex sm:flex-row gap-[20px] flex-col items-center justify-between">
@@ -296,10 +314,20 @@ const SeatBooking = () => {
                                     {
                                         icon: 'bi bi-clock',
                                         label: 'Giờ chiếu',
-                                        value: formatTime(showTimeData?.data?.date),
+                                        value: formatTime(showTimeData?.data?.start_time),
                                     },
                                     { icon: 'bi bi-tv', label: 'Phòng chiếu', value: screenData?.data?.name },
-                                    { icon: 'bi bi-film', label: 'Ghế', value: 'Rap ABC' },
+                                    {
+                                        icon: 'bi bi-film',
+                                        label: 'Ghế',
+                                        value: booking.length
+                                            ? booking.map((item, index) => (
+                                                  <span className="mx-1" key={index}>
+                                                      {item?.name}
+                                                  </span>
+                                              ))
+                                            : 'Chưa chọn',
+                                    },
                                 ].map((item, index) => {
                                     return (
                                         <Fragment key={index}>
@@ -317,9 +345,9 @@ const SeatBooking = () => {
                                     );
                                 })}
                             </div>
-
+                            <DiscountSelector discounts={promoCode} />
                             <button
-                                className="rounded-[10px] bg-[#ff4444] text-[#fff] px-[32px] py-[8px] font-[500]"
+                                className="rounded-[10px] mt-4 bg-[#ff4444] text-[#fff] px-[32px] py-[8px] font-[500]"
                                 onClick={handleNextStep}
                             >
                                 Tiếp tục
@@ -657,5 +685,64 @@ const Chair = ({ name, booked, booking, setBooking, price, isDoubleChair, type, 
                 </div>
             </div>
         </Popover>
+    );
+};
+
+const DiscountSelector = ({ discounts }) => {
+    const currentDate = new Date().toISOString().split('T')[0];
+    const [selectedCode, setSelectedCode] = useState(null);
+
+    const handleCopy = (e, code) => {
+        e.stopPropagation();
+        navigator.clipboard.writeText(code);
+        message.success('Đã copy mã giảm giá!');
+    };
+
+    const handleSelect = (item) => {
+        const disabled = item.status !== 'active' || item.end_date < currentDate;
+        if (!disabled) {
+            setSelectedCode(item.code);
+        }
+    };
+
+    return (
+        <List
+            itemLayout="horizontal"
+            dataSource={discounts}
+            renderItem={(item) => {
+                const disabled = item.status !== 'active' || item.end_date < currentDate;
+                const isSelected = selectedCode === item.code;
+                return (
+                    <List.Item
+                        onClick={() => handleSelect(item)}
+                        className={`cursor-pointer p-4 border rounded mb-2  ${
+                            disabled
+                                ? 'opacity-50 cursor-not-allowed'
+                                : isSelected
+                                ? 'border-blue-500'
+                                : 'border-gray-200'
+                        }`}
+                    >
+                        <div className="flex justify-between items-center w-full px-2 py-1">
+                            <div className="flex flex-col">
+                                <span className="font-semibold">{item.code}</span>
+                                <span className="text-sm text-gray-500">{item.description}</span>
+                            </div>
+                            <div className="flex items-center">
+                                {disabled && (
+                                    <Badge count="Hết hạn" style={{ backgroundColor: '#f5222d' }} className="mr-2" />
+                                )}
+                                <Button
+                                    type="primary"
+                                    size="small"
+                                    icon={<CopyOutlined />}
+                                    onClick={(e) => handleCopy(e, item.code)}
+                                />
+                            </div>
+                        </div>
+                    </List.Item>
+                );
+            }}
+        />
     );
 };

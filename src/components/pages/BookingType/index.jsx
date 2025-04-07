@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import { ArrowLeftOutlined } from '@ant-design/icons';
-import { Button, Card, Layout, Typography } from 'antd';
+import { Button, Card, Input, Layout, Typography } from 'antd';
+import { useState } from 'react';
 import { formatVND } from '../../../helpers/formatVND';
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -14,10 +15,6 @@ function calculateTotal(products) {
 
 // eslint-disable-next-line react/prop-types
 const MovieTicketBooking = ({ handleCreateOrder, dataOrder, className, setStep, firm, bookings }) => {
-    console.log(firm);
-    console.log(bookings);
-    console.log(dataOrder);
-
     function getPriceSeatTotal() {
         let total = 0;
         bookings.forEach((item) => {
@@ -26,6 +23,8 @@ const MovieTicketBooking = ({ handleCreateOrder, dataOrder, className, setStep, 
 
         return total;
     }
+
+    const [discountCode, setDiscountCode] = useState('');
 
     return (
         <Layout className={`min-h-screen bg-gray-100 ${className}`}>
@@ -119,12 +118,17 @@ const MovieTicketBooking = ({ handleCreateOrder, dataOrder, className, setStep, 
                                         )}
                                     </Text>
                                 </div>
-
+                                <Input
+                                    placeholder="Nhập mã giảm giá"
+                                    value={discountCode}
+                                    onChange={(e) => setDiscountCode(e.target.value)}
+                                    className="mr-2"
+                                />
                                 <Button
                                     type="primary"
                                     block
                                     className="mt-2 bg-blue-600"
-                                    onClick={() => handleCreateOrder(dataOrder)}
+                                    onClick={() => handleCreateOrder(dataOrder, discountCode)}
                                 >
                                     Proceed to Pay
                                 </Button>
