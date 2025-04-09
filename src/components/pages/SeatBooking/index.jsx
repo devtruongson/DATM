@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import { CopyOutlined, DownOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Badge, Button, Card, Col, Descriptions, List, message, Modal, Popover, Row, Spin } from 'antd';
+import { HttpStatusCode } from 'axios';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -28,6 +29,7 @@ const SeatBooking = () => {
     const [searchParams] = useSearchParams();
     const queryParams = useMemo(() => Object?.fromEntries(searchParams.entries()), [searchParams]);
     const [booking, setBooking] = useState([]);
+    const [dataHold, setDataHold] = useState([]);
 
     const { data: movieData } = useGetMovie({ id: queryParams?.filmId });
     const { data: showTimeData } = useGetShowTime({ id: queryParams?.showtime });
@@ -38,12 +40,42 @@ const SeatBooking = () => {
 
     useEffect(() => {
         const _fetch = async () => {
+            try {
+                const res = await axios.get('http://localhost:3000/booking');
+                if (res.data.code === HttpStatusCode.Ok) {
+                    if (res?.data?.data?.length > 0) {
+                        setDataHold(res.data.data);
+                    }
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        const id = setInterval(_fetch, 500);
+        return () => clearInterval(id);
+    }, []);
+
+    const toggleHold = async (id, type) => {
+        try {
+            if (type === 'add') {
+                await axios.post('http://localhost:3000/booking', {
+                    id,
+                });
+            } else {
+                await axios.delete(`http://localhost:3000/booking/${id}`);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
+        const _fetch = async () => {
             const { data } = await axios.get(`/promocodes`);
             if (data) {
                 setPromoCode(data?.data);
             }
         };
-
         _fetch();
     }, []);
 
@@ -267,6 +299,8 @@ const SeatBooking = () => {
                                         return (
                                             <div className="w-[100%]" key={index}>
                                                 <ListChair
+                                                    toggleHold={toggleHold}
+                                                    dataHold={dataHold}
                                                     target={item}
                                                     booked={data?.booked}
                                                     booking={booking}
@@ -281,20 +315,23 @@ const SeatBooking = () => {
                             )}
 
                             <div className="flex justify-center items-center mb-[40px]">
-                                <div className="grid grid-cols-4 gap-[24px]">
+                                <div className="grid grid-cols-5 gap-[24px]">
                                     {[
                                         { bg: '#babac1', label: 'Ghế đã đặt' },
                                         { bg: '#7331d6', label: 'Ghế thường' },
                                         { bg: '#f14052', label: 'Ghế VIP' },
                                         { bg: '#ffc107', label: 'Ghế Đôi' },
+                                        { bg: '#0dcaf0', label: 'Ghế Đang Giữ' },
                                     ].map((item, index) => {
                                         return (
                                             <div className="flex justify-start items-center gap-[10px]" key={index}>
                                                 <div
-                                                    className="w-[40px] h-[40px]"
+                                                    className="w-[20px] h-[20px] flex-shrink-0 rounded-md"
                                                     style={{ background: item.bg }}
                                                 ></div>
-                                                <p className="text-[#000]">{item.label}</p>
+                                                <p className="text-[#000] text-[12px] font-semibold whitespace-nowrap">
+                                                    {item.label}
+                                                </p>
                                             </div>
                                         );
                                     })}
@@ -391,14 +428,17 @@ const SeatBooking = () => {
 
 export default SeatBooking;
 
-const ListChair = ({ target, booked, booking, setBooking, isDoubleChair, type }) => {
+const ListChair = ({ target, booked, booking, setBooking, isDoubleChair, type, dataHold = [], toggleHold }) => {
     return (
         <div className="flex justify-center items-center gap-[50px]">
             <p className="uppercase font-[500] text-[20px] text-[#333]">{target.row}</p>
             <div className="flex justify-start items-center gap-[10px]">
                 {target.seats.map((item) => {
+                    const isHoldSeat = dataHold.find((itemChild) => itemChild.seat_id === item.id);
                     return (
                         <Chair
+                            toggleHold={toggleHold}
+                            isHoldSeat={isHoldSeat}
                             name={`${target.row}${item.number}`}
                             key={item.id}
                             booked={booked}
@@ -620,15 +660,55 @@ function calculateTotal(products) {
     }, 0);
 }
 
-const Chair = ({ name, booked, booking, setBooking, price, isDoubleChair, type, priceNotFormat, id, isBuy }) => {
+const Chair = ({
+    name,
+    booked,
+    booking,
+    setBooking,
+    price,
+    isDoubleChair,
+    type,
+    priceNotFormat,
+    id,
+    isBuy,
+    isHoldSeat,
+    toggleHold,
+}) => {
     const isBooked = useMemo(() => booked?.find((item) => item.name === name), [name, booked]);
     const isBooking = useMemo(() => booking?.find((item) => item.name === name), [name, booking]);
-
-    console.log(booked, booking);
 
     const color = useMemo(() => {
         if (isBuy) {
             return 'rgb(186, 186, 193)';
+        }
+
+        console.log(
+            isHoldSeat,
+            booking.find((itemChild) => itemChild?.id !== isHoldSeat?.seat_id),
+            booking,
+        );
+
+        if (isHoldSeat) {
+            if (booking.find((itemChild) => itemChild?.id === isHoldSeat?.seat_id)) {
+                if (booked?.some((item) => item.name === name)) {
+                    return '#babac1';
+                }
+                if (booking?.some((item) => item.name === name)) {
+                    return '#1d59a2';
+                }
+
+                if (type === 'Ghế thường') {
+                    return '#7331d6';
+                }
+                if (type === 'Ghế VIP' || type === 'Ghế V.I.P') {
+                    return '#f14052';
+                }
+
+                if (type === 'Ghế đôi') {
+                    return '#ffc107';
+                }
+            }
+            return '#0dcaf0';
         }
 
         if (booked?.some((item) => item.name === name)) {
@@ -653,11 +733,12 @@ const Chair = ({ name, booked, booking, setBooking, price, isDoubleChair, type, 
             return '#ffc107';
         }
         return '';
-    }, [booked, booking, name]);
+    }, [isBuy, booked, booking, type, isHoldSeat, isDoubleChair, name]);
 
     const handleChoose = () => {
         if (isBooking) {
             setBooking([...booking].filter((item) => item.name !== name));
+            toggleHold(id, 'remove');
         } else {
             setBooking((prev) => [
                 ...prev,
@@ -667,6 +748,7 @@ const Chair = ({ name, booked, booking, setBooking, price, isDoubleChair, type, 
                     id,
                 },
             ]);
+            toggleHold(id, 'add');
         }
     };
 
@@ -690,6 +772,25 @@ const Chair = ({ name, booked, booking, setBooking, price, isDoubleChair, type, 
                                       icon: 'info',
                                       text: 'Ghế đã được đặt',
                                   });
+                              }
+                            : isHoldSeat
+                            ? () => {
+                                  console.log(
+                                      booking.find((itemChild) => {
+                                          console.log(itemChild, isHoldSeat, itemChild?.id, isHoldSeat?.seat_id);
+                                          return itemChild?.id === isHoldSeat?.seat_id;
+                                      }),
+                                      booking,
+                                      isHoldSeat,
+                                  );
+                                  if (!booking.find((itemChild) => itemChild?.id === isHoldSeat?.seat_id)) {
+                                      Swal.fire({
+                                          icon: 'info',
+                                          text: 'Ghế đang được người khác dữ',
+                                      });
+                                  } else {
+                                      isBooked ? null : handleChoose();
+                                  }
                               }
                             : isBooked
                             ? null
