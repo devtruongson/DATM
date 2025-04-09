@@ -47,8 +47,6 @@ const SeatBooking = () => {
         _fetch();
     }, []);
 
-    console.log(promoCode);
-
     const formatDate = useMemo(() => {
         if (!showTimeData?.data?.date) return '';
         const date = new Date(showTimeData?.data?.date);
@@ -186,10 +184,28 @@ const SeatBooking = () => {
             formData.append(`products[${index}][quantity]`, item.quantity);
         });
         formData.append('payment_method_id', 1);
-        const id = promoCode.find((item) => item.code === discount)?.id;
-        if (id) {
-            formData.append('promo_code_id', id);
+        if (discount) {
+            const discountFind = promoCode.find((item) => item.code === discount.trim());
+            if (discountFind) {
+                const currentDate = new Date().toISOString().split('T')[0];
+                const disabled = discountFind.status !== 'active' || discountFind.end_date < currentDate;
+                if (!disabled) {
+                    formData.append('promo_code_id', id);
+                }
+                {
+                    Swal.fire({
+                        icon: 'info',
+                        text: 'Mã giảm giá của bạn đã ngừng kích hoạt hoặc hết hạn',
+                    });
+                }
+            } else {
+                Swal.fire({
+                    icon: 'info',
+                    text: 'Mã giảm giá của bạn không chính sác chúng tôi sẽ tiếp tục tạo đơn hàng cho bạn.',
+                });
+            }
         }
+
         createOrderMutation.mutate(formData);
     };
 
@@ -345,7 +361,7 @@ const SeatBooking = () => {
                                     );
                                 })}
                             </div>
-                            <DiscountSelector discounts={promoCode} />
+                            {/* <DiscountSelector discounts={promoCode} /> */}
                             <button
                                 className="rounded-[10px] mt-4 bg-[#ff4444] text-[#fff] px-[32px] py-[8px] font-[500]"
                                 onClick={handleNextStep}
