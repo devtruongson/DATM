@@ -190,7 +190,7 @@ const SeatBooking = () => {
                 const currentDate = new Date().toISOString().split('T')[0];
                 const disabled = discountFind.status !== 'active' || discountFind.end_date < currentDate;
                 if (!disabled) {
-                    formData.append('promo_code_id', id);
+                    formData.append('promo_code_id', discountFind?.id);
                 }
                 {
                     Swal.fire({
