@@ -191,8 +191,7 @@ const SeatBooking = () => {
                 const disabled = discountFind.status !== 'active' || discountFind.end_date < currentDate;
                 if (!disabled) {
                     formData.append('promo_code_id', discountFind?.id);
-                }
-                {
+                } else {
                     Swal.fire({
                         icon: 'info',
                         text: 'Mã giảm giá của bạn đã ngừng kích hoạt hoặc hết hạn',
