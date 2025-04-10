@@ -43,9 +43,7 @@ const SeatBooking = () => {
             try {
                 const res = await axios.get('http://localhost:3000/booking');
                 if (res.data.code === HttpStatusCode.Ok) {
-                    if (res?.data?.data?.length > 0) {
-                        setDataHold(res.data.data);
-                    }
+                    setDataHold(res.data.data);
                 }
             } catch (error) {
                 console.log(error);
@@ -222,7 +220,7 @@ const SeatBooking = () => {
                 const currentDate = new Date().toISOString().split('T')[0];
                 const disabled = discountFind.status !== 'active' || discountFind.end_date < currentDate;
                 if (!disabled) {
-                    formData.append('promo_code_id', discountFind?.id);
+                    formData.append('promo_code_id', parseInt(discountFind?.id));
                 } else {
                     Swal.fire({
                         icon: 'info',
@@ -409,6 +407,7 @@ const SeatBooking = () => {
                 </ContainerWapper>
             </div>
             <ModalCheckOut
+                promoCode={promoCode}
                 movie={{
                     ...movie,
                     screen: screenData?.data,
@@ -458,7 +457,7 @@ const ListChair = ({ target, booked, booking, setBooking, isDoubleChair, type, d
     );
 };
 
-function ModalCheckOut({ isModalOpen, handleCancel, handleCreateOrder, bookings, movie }) {
+function ModalCheckOut({ isModalOpen, handleCancel, handleCreateOrder, bookings, movie, promoCode }) {
     const { data } = useGetAllProduct({});
     const products = useMemo(() => (data?.data ? data?.data : []), [data]);
     const [productCheckOut, setProductCheckOut] = useState([]);
@@ -544,6 +543,7 @@ function ModalCheckOut({ isModalOpen, handleCancel, handleCreateOrder, bookings,
             )}
             {step === 2 && (
                 <MovieTicketBooking
+                    promoCode={promoCode}
                     dataOrder={productCheckOut}
                     firm={movie}
                     setStep={setStep}

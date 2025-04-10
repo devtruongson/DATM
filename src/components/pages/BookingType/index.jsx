@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Button, Card, Input, Layout, Typography } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { formatVND } from '../../../helpers/formatVND';
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -14,7 +14,7 @@ function calculateTotal(products) {
 }
 
 // eslint-disable-next-line react/prop-types
-const MovieTicketBooking = ({ handleCreateOrder, dataOrder, className, setStep, firm, bookings }) => {
+const MovieTicketBooking = ({ handleCreateOrder, dataOrder, className, setStep, firm, bookings, promoCode }) => {
     function getPriceSeatTotal() {
         let total = 0;
         bookings.forEach((item) => {
@@ -25,6 +25,17 @@ const MovieTicketBooking = ({ handleCreateOrder, dataOrder, className, setStep, 
     }
 
     const [discountCode, setDiscountCode] = useState('');
+    const [percentDiscount, setPercentDiscount] = useState(0);
+
+    useEffect(() => {
+        if (promoCode.length === 0) return;
+        const percent = promoCode.find((item) => item.code === discountCode)?.discount_amount;
+        if (percent) {
+            setPercentDiscount(parseFloat(percent));
+        } else {
+            setPercentDiscount(0);
+        }
+    }, [discountCode, promoCode]);
 
     return (
         <Layout className={`min-h-screen bg-gray-100 ${className}`}>
@@ -112,9 +123,23 @@ const MovieTicketBooking = ({ handleCreateOrder, dataOrder, className, setStep, 
                                 <div className="flex justify-between mt-4 mb-2">
                                     <Text className="font-semibold">Payable Amount</Text>
                                     <Text className="font-semibold">
-                                        {' '}
-                                        {formatVND(
-                                            Math.floor(calculateTotal(dataOrder) + parseFloat(getPriceSeatTotal())),
+                                        <div className={`${percentDiscount ? 'line-through text-[#666]' : ''}`}>
+                                            {formatVND(
+                                                Math.floor(calculateTotal(dataOrder) + parseFloat(getPriceSeatTotal())),
+                                            )}
+                                        </div>
+                                        {percentDiscount ? (
+                                            <div>
+                                                {formatVND(
+                                                    Math.floor(
+                                                        calculateTotal(dataOrder) +
+                                                            parseFloat(getPriceSeatTotal()) *
+                                                                ((100 - percentDiscount) / 100),
+                                                    ),
+                                                )}
+                                            </div>
+                                        ) : (
+                                            ''
                                         )}
                                     </Text>
                                 </div>
