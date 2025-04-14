@@ -1,9 +1,10 @@
 import { Carousel, Menu, Modal, Popover, Select } from 'antd';
+import axios from 'axios';
 import { Fragment, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { handleLogoutUser, handleToggleModalAuth } from '../../../app/slices/appSlice';
+import { handleDataProvince, handleLogoutUser, handleToggleModalAuth } from '../../../app/slices/appSlice';
 import MovieProDrawer from '../ModalNav';
 
 export default function Header() {
@@ -38,6 +39,32 @@ export default function Header() {
     const handleClickMenuHeader = (value) => {
         setCurrent(value.key);
     };
+
+    const [provinceData, setProvinceData] = useState([]);
+
+    useEffect(() => {
+        const _fetch = async () => {
+            try {
+                const res = await axios.get('http://filmgo.io.vn/api/provinces');
+                if (res?.data?.data) {
+                    const dataBuild = await Promise.all(
+                        res.data.data.map(async (item) => {
+                            const cenimaRes = await axios.post('http://filmgo.io.vn/api/cinemas', {
+                                province_id: item.id,
+                            });
+                            item.cinemas = cenimaRes?.data?.data;
+                            return item;
+                        }),
+                    );
+                    setProvinceData(dataBuild);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        _fetch();
+    }, []);
 
     const headerNavidata = [
         {
@@ -841,8 +868,101 @@ export default function Header() {
         </div>
     );
 
+    const [provinceId, setProvinceId] = useState(null);
+    const [cinemaId, setCinemaId] = useState(null);
+
+    const { province_id, cinema_id } = useSelector((state) => state.app.province);
+
+    useEffect(() => {
+        setProvinceId(province_id);
+        setCinemaId(cinema_id);
+    }, [province_id, cinema_id]);
+
+    const handleSubmitCinema = () => {
+        if (!provinceId || !cinemaId || provinceId === 'null' || cinemaId === 'null') {
+            Swal.fire({
+                icon: 'info',
+                text: 'Bạn vui lòng chọn đầy đủ địa chỉ và dạp phim',
+            });
+            return;
+        }
+        dispatch(
+            handleDataProvince({
+                province_id: provinceId,
+                cinema_id: cinemaId,
+            }),
+        );
+        setModalProvince(false);
+    };
+
+    const [modalProvince, setModalProvince] = useState(false);
+
+    useEffect(() => {
+        if (!province_id || !cinema_id) {
+            setModalProvince(true);
+        }
+    }, [province_id, cinema_id]);
+
     return (
         <header className="bg-[#ff4444] h-[100px] flex items-center">
+            <Modal
+                onCancel={() => setModalProvince(false)}
+                width={'40vw'}
+                open={modalProvince}
+                footer={
+                    <button
+                        onClick={handleSubmitCinema}
+                        type="button"
+                        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                    >
+                        Lưu thay đổi
+                    </button>
+                }
+                title="Chọn tỉnh thành & dạp phim của bạn"
+            >
+                <div className="flex flex-col md:flex-row gap-4 mt-6">
+                    <div className="flex-1">
+                        <label className="block mb-1 text-sm font-medium text-gray-700">Chọn tỉnh thành</label>
+                        <select
+                            value={provinceId}
+                            onChange={(e) => {
+                                setProvinceId(e.target.value);
+                            }}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="">---- Chọn tỉnh thành ----</option>
+                            {provinceData?.map((item, index) => (
+                                <option value={item.id} key={index}>
+                                    {item.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="flex-1">
+                        <label className="block mb-1 text-sm font-medium text-gray-700">Chọn rạp phim</label>
+                        <select
+                            value={cinemaId}
+                            onChange={(e) => {
+                                setCinemaId(e.target.value);
+                            }}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="">
+                                {!provinceId ? '---- Vui lòng chọn địa điểm trước ----' : '---- Chọn rạp phim ----'}
+                            </option>
+                            {provinceId &&
+                                provinceData
+                                    ?.find((item) => item.id == provinceId)
+                                    ?.cinemas?.map((item, index) => (
+                                        <option value={item.id} key={index}>
+                                            {item.name}
+                                        </option>
+                                    ))}
+                        </select>
+                    </div>
+                </div>
+            </Modal>
+
             <div className="px-[15px] flex justify-between items-center w-full">
                 <div className="flex items-center gap-[20px] flex-1">
                     <a href="/">
@@ -890,39 +1010,46 @@ export default function Header() {
                             </button>
                         ) : (
                             <Popover content={contentUserLogin} title="Thông tin tài khoản">
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        gap: 10,
-                                        fontWeight: 600,
-                                        color: '#fff',
-                                        background: 'rgba(0,0,0,0.2)',
-                                        padding: '6px 20px',
-                                        borderRadius: 10,
-                                        cursor: 'pointer',
-                                    }}
-                                >
-                                    <img
+                                <div>
+                                    <div
                                         style={{
-                                            borderRadius: '50%',
-                                            width: 40,
-                                            height: 40,
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            gap: 10,
+                                            fontWeight: 600,
+                                            color: '#fff',
+                                            background: 'rgba(0,0,0,0.2)',
+                                            padding: '6px 20px',
+                                            borderRadius: 10,
+                                            cursor: 'pointer',
                                         }}
-                                        src={
-                                            user[0]?.avatar == 'http://filmgo.io.vn/images/avatars/default.jpg'
-                                                ? 'https://static.thenounproject.com/png/4154905-200.png'
-                                                : user[0]?.avatar
-                                        }
-                                        alt="hình ảnh người dùng"
-                                    />
-                                    <p>Welcome {user[0]?.name}</p>
+                                    >
+                                        <img
+                                            style={{
+                                                borderRadius: '50%',
+                                                width: 40,
+                                                height: 40,
+                                            }}
+                                            src={
+                                                user[0]?.avatar == 'http://filmgo.io.vn/images/avatars/default.jpg'
+                                                    ? 'https://static.thenounproject.com/png/4154905-200.png'
+                                                    : user[0]?.avatar
+                                            }
+                                            alt="hình ảnh người dùng"
+                                        />
+                                        <p>Welcome {user[0]?.name}</p>
+                                    </div>
                                 </div>
                             </Popover>
                         )}
                     </Fragment>
-
+                    <button
+                        onClick={() => setModalProvince(true)}
+                        className="py-2.5 px-5 h-[50px] me-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                    >
+                        Xem vị trí
+                    </button>
                     <button
                         onClick={showDrawer}
                         className="w-[50px] h-[50px]  bg-[rgba(0,0,0,0.2)] rounded-[10px] flex justify-center items-center"

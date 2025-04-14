@@ -5,6 +5,10 @@ const initialState = {
         isOpenModalPriviewVideo: false,
         url: '',
     },
+    province: {
+        province_id: null,
+        cinema_id: null,
+    },
     auth: {
         isLoginIn: false,
         user: null,
@@ -44,10 +48,15 @@ export const appSlice = createSlice({
         handleToggleModalAuth(state, action) {
             state.auth.isOpenModal = action.payload ? action.payload : !state.auth.isOpenModal;
         },
+        handleDataProvince(state, action) {
+            state.province.province_id = action.payload.province_id;
+            state.province.cinema_id = action.payload.cinema_id;
+        },
     },
 });
 
 export const {
+    handleDataProvince,
     handleDataVideoPreview,
     handleLoginUserSuccess,
     handleLogoutUser,

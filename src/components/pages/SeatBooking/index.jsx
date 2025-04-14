@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 import { CopyOutlined, DownOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Badge, Button, Card, Col, Descriptions, List, message, Modal, Popover, Row, Spin } from 'antd';
-import { HttpStatusCode } from 'axios';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -39,32 +38,32 @@ const SeatBooking = () => {
     const [promoCode, setPromoCode] = useState([]);
 
     useEffect(() => {
-        const _fetch = async () => {
-            try {
-                const res = await axios.get('http://localhost:3000/booking');
-                if (res.data.code === HttpStatusCode.Ok) {
-                    setDataHold(res.data.data);
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        };
-        const id = setInterval(_fetch, 500);
-        return () => clearInterval(id);
+        // const _fetch = async () => {
+        //     try {
+        //         const res = await axios.get('http://localhost:3000/booking');
+        //         if (res.data.code === HttpStatusCode.Ok) {
+        //             setDataHold(res.data.data);
+        //         }
+        //     } catch (error) {
+        //         console.log(error);
+        //     }
+        // };
+        // const id = setInterval(_fetch, 500);
+        // return () => clearInterval(id);
     }, []);
 
     const toggleHold = async (id, type) => {
-        try {
-            if (type === 'add') {
-                await axios.post('http://localhost:3000/booking', {
-                    id,
-                });
-            } else {
-                await axios.delete(`http://localhost:3000/booking/${id}`);
-            }
-        } catch (error) {
-            console.log(error);
-        }
+        // try {
+        //     if (type === 'add') {
+        //         await axios.post('http://localhost:3000/booking', {
+        //             id,
+        //         });
+        //     } else {
+        //         await axios.delete(`http://localhost:3000/booking/${id}`);
+        //     }
+        // } catch (error) {
+        //     console.log(error);
+        // }
     };
 
     useEffect(() => {
@@ -204,6 +203,9 @@ const SeatBooking = () => {
     });
 
     const handleCreateOrder = (dataOrder, discount = '') => {
+        const valid = isValidBooking(dataRenderSeat, booking);
+        if (!valid) return;
+
         const formData = new FormData();
         formData.append('showtime_id', queryParams?.showtime);
         booking.forEach((item) => {
@@ -238,6 +240,251 @@ const SeatBooking = () => {
         createOrderMutation.mutate(formData);
     };
 
+    function isValidBooking(seats, selectedSeats) {
+        if (selectedSeats.length === 0) {
+            console.error('Không có ghế nào được chọn.');
+            return false;
+        }
+
+        const seatMap = {};
+        const rowMaxCols = {};
+        const rowMinCols = {};
+        seats.forEach((row) => {
+            row.seats.forEach((seat) => {
+                const seatCode = seat.row + seat.number;
+                const rowIndex = row.row.charCodeAt(0) - 'A'.charCodeAt(0);
+                const colIndex = parseInt(seat.number) - 1;
+                seatMap[seatCode] = {
+                    row: rowIndex,
+                    col: colIndex,
+                    isBooked: seat.isBooked,
+                };
+                if (!rowMaxCols[row.row]) {
+                    rowMaxCols[row.row] = colIndex;
+                    rowMinCols[row.row] = colIndex;
+                } else {
+                    rowMaxCols[row.row] = Math.max(rowMaxCols[row.row], colIndex);
+                    rowMinCols[row.row] = Math.min(rowMinCols[row.row], colIndex);
+                }
+            });
+        });
+
+        for (const seat of selectedSeats) {
+            const seatCode = seat.name;
+            if (!seatMap[seatCode]) {
+                Swal.fire({
+                    icon: 'info',
+                    text: `Ghế ${seatCode} không tồn tại trong rạp.`,
+                });
+                return false;
+            }
+            if (seatMap[seatCode].isBooked) {
+                Swal.fire({
+                    icon: 'info',
+                    text: `Ghế ${seatCode} đã được đặt.`,
+                });
+                return false;
+            }
+        }
+
+        const selectedCoords = selectedSeats.map((seat) => seatMap[seat.name]);
+        const row = selectedCoords[0].row;
+        const cols = selectedCoords.map((coord) => coord.col).sort((a, b) => a - b);
+
+        // Kiểm tra cùng hàng
+        if (!selectedCoords.every((coord) => coord.row === row)) {
+            Swal.fire({
+                icon: 'info',
+                text: 'Các ghế không ở cùng một hàng.',
+            });
+            return false;
+        }
+
+        for (let i = 1; i < cols.length; i++) {
+            if (cols[i] !== cols[i - 1] + 1) {
+                Swal.fire({
+                    icon: 'info',
+                    text: 'Có ghế trống ở giữa các ghế đã chọn.',
+                });
+                return false;
+            }
+        }
+
+        const selectedSet = new Set(selectedSeats.map((seat) => seat.name));
+        const rowLabel = String.fromCharCode('A'.charCodeAt(0) + row);
+        const maxColInRow = rowMaxCols[rowLabel];
+        const minColInRow = rowMinCols[rowLabel];
+
+        const maxCol = Math.max(...cols);
+        if (maxCol === maxColInRow - 1) {
+            // Ghế thứ 2 từ cuối
+            const rightSeatCode = rowLabel + (maxCol + 2);
+            if (!selectedSet.has(rightSeatCode) && !seatMap[rightSeatCode].isBooked) {
+                Swal.fire({
+                    icon: 'info',
+                    text: `Việc đặt ghế để lại ghế trống ở bên phải (${rightSeatCode}).`,
+                });
+                return false;
+            }
+        }
+
+        const minCol = Math.min(...cols);
+        if (minCol === minColInRow + 1) {
+            // Ghế thứ 2 từ đầu
+            const leftSeatCode = rowLabel + minCol;
+            if (!selectedSet.has(leftSeatCode) && !seatMap[leftSeatCode].isBooked) {
+                Swal.fire({
+                    icon: 'info',
+                    text: `Việc đặt ghế để lại ghế trống ở bên trái (${leftSeatCode}).`,
+                });
+                return false;
+            }
+        }
+
+        for (const col of cols) {
+            if (row > 0) {
+                const topRowLabel = String.fromCharCode('A'.charCodeAt(0) + row - 1);
+                const maxColInTopRow = rowMaxCols[topRowLabel];
+                const minColInTopRow = rowMinCols[topRowLabel];
+                const topSeatCode = topRowLabel + (col + 1);
+
+                if (
+                    col === maxColInTopRow - 1 &&
+                    seatMap[topSeatCode] &&
+                    !selectedSet.has(topSeatCode) &&
+                    !seatMap[topSeatCode].isBooked
+                ) {
+                    const topRightSeatCode = topRowLabel + (col + 2);
+                    if (
+                        seatMap[topRightSeatCode] &&
+                        !selectedSet.has(topRightSeatCode) &&
+                        !seatMap[topRightSeatCode].isBooked
+                    ) {
+                        Swal.fire({
+                            icon: 'info',
+                            text: `Việc đặt ghế để lại ghế trống ở hàng trên (${topRightSeatCode}).`,
+                        });
+                        return false;
+                    }
+                }
+
+                if (
+                    col === minColInTopRow + 1 &&
+                    seatMap[topSeatCode] &&
+                    !selectedSet.has(topSeatCode) &&
+                    !seatMap[topSeatCode].isBooked
+                ) {
+                    const topLeftSeatCode = topRowLabel + col;
+                    if (
+                        seatMap[topLeftSeatCode] &&
+                        !selectedSet.has(topLeftSeatCode) &&
+                        !seatMap[topLeftSeatCode].isBooked
+                    ) {
+                        Swal.fire({
+                            icon: 'info',
+                            text: `Việc đặt ghế để lại ghế trống ở hàng trên (${topLeftSeatCode}).`,
+                        });
+                        return false;
+                    }
+                }
+            }
+
+            if (row < seats.length - 1) {
+                const bottomRowLabel = String.fromCharCode('A'.charCodeAt(0) + row + 1);
+                const maxColInBottomRow = rowMaxCols[bottomRowLabel];
+                const minColInBottomRow = rowMinCols[bottomRowLabel];
+                const bottomSeatCode = bottomRowLabel + (col + 1);
+
+                if (
+                    col === maxColInBottomRow - 1 &&
+                    seatMap[bottomSeatCode] &&
+                    !selectedSet.has(bottomSeatCode) &&
+                    !seatMap[bottomSeatCode].isBooked
+                ) {
+                    const bottomRightSeatCode = bottomRowLabel + (col + 2);
+                    if (
+                        seatMap[bottomRightSeatCode] &&
+                        !selectedSet.has(bottomRightSeatCode) &&
+                        !seatMap[bottomRightSeatCode].isBooked
+                    ) {
+                        Swal.fire({
+                            icon: 'info',
+                            text: `Việc đặt ghế để lại ghế trống ở hàng dưới (${bottomRightSeatCode}).`,
+                        });
+                        return false;
+                    }
+                }
+
+                if (
+                    col === minColInBottomRow + 1 &&
+                    seatMap[bottomSeatCode] &&
+                    !selectedSet.has(bottomSeatCode) &&
+                    !seatMap[bottomSeatCode].isBooked
+                ) {
+                    const bottomLeftSeatCode = bottomRowLabel + col;
+                    if (
+                        seatMap[bottomLeftSeatCode] &&
+                        !selectedSet.has(bottomLeftSeatCode) &&
+                        !seatMap[bottomLeftSeatCode].isBooked
+                    ) {
+                        Swal.fire({
+                            icon: 'info',
+                            text: `Việc đặt ghế để lại ghế trống ở hàng dưới (${bottomLeftSeatCode}).`,
+                        });
+                        return false;
+                    }
+                }
+            }
+        }
+
+        const isIsolatedEmptySeat = (row, col) => {
+            const seatCode = String.fromCharCode('A'.charCodeAt(0) + row) + (col + 1);
+            if (!seatMap[seatCode] || selectedSet.has(seatCode) || seatMap[seatCode].isBooked) {
+                return false;
+            }
+
+            const neighbors = [
+                { r: row - 1, c: col },
+                { r: row, c: col - 1 },
+                { r: row, c: col + 1 },
+                { r: row + 1, c: col },
+            ];
+
+            let emptyNeighbors = 0;
+            for (const { r, c } of neighbors) {
+                const neighborCode = String.fromCharCode('A'.charCodeAt(0) + r) + (c + 1);
+                if (seatMap[neighborCode] && !selectedSet.has(neighborCode) && !seatMap[neighborCode].isBooked) {
+                    emptyNeighbors++;
+                }
+            }
+
+            return emptyNeighbors === 0;
+        };
+
+        for (const { row, col } of selectedCoords) {
+            const neighbors = [
+                { r: row - 1, c: col },
+                { r: row, c: col - 1 },
+                { r: row, c: col + 1 },
+                { r: row + 1, c: col },
+            ];
+
+            for (const { r, c } of neighbors) {
+                if (isIsolatedEmptySeat(r, c)) {
+                    Swal.fire({
+                        icon: 'info',
+                        text: `Việc đặt ghế để lại ghế trống đơn lẻ tại hàng ${String.fromCharCode(
+                            'A'.charCodeAt(0) + r,
+                        )}, cột ${c + 1}.`,
+                    });
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     return (
         <div className="w-[100%] text-[#ffffff61] pb-10">
             <div className="bg-[#2B2D3D] w-[100%] sm:h-[120px] h-[300px] ">
@@ -245,7 +492,7 @@ const SeatBooking = () => {
                     <div className="flex sm:flex-row gap-[20px] flex-col items-center justify-between">
                         <div className="">
                             <button
-                                className="bg-[#3f414f] hover:bg-[#ff4444] hover:text-[#fff] px-[28px] py-[4px] rounded-[8px]"
+                                className="bg-[#747894] hover:bg-[#ff4444] hover:text-[#fff] px-[28px] py-[4px] rounded-[8px]"
                                 onClick={() => navigate(routes.movie_booking.replace(':id', queryParams?.filmId))}
                             >
                                 Back
@@ -344,7 +591,7 @@ const SeatBooking = () => {
                         {/* detail movie */}
                         <div className="w-[25%] text-[#000]">
                             <div className="flex justify-start gap-[20px] mb-[40px]">
-                                <img src={movie?.thumbnail} alt="" className="w-[150px] object-cover" />
+                                <img src={movie?.thumbnail} alt="" className="w-[150px] object-cover rounded-md" />
                                 <div className="">
                                     <p className="text-[#ff4444] text-[24px] font-[600]">{movie?.name}</p>
                                     <p></p>
@@ -682,12 +929,6 @@ const Chair = ({
             return 'rgb(186, 186, 193)';
         }
 
-        console.log(
-            isHoldSeat,
-            booking.find((itemChild) => itemChild?.id !== isHoldSeat?.seat_id),
-            booking,
-        );
-
         if (isHoldSeat) {
             if (booking.find((itemChild) => itemChild?.id === isHoldSeat?.seat_id)) {
                 if (booked?.some((item) => item.name === name)) {
@@ -763,7 +1004,7 @@ const Chair = ({
                     style={{
                         background: color,
                         borderColor: color,
-                        width: isDoubleChair ? '80px' : '40px',
+                        width: type === 'Ghế đôi' ? '80px' : '40px',
                     }}
                     onClick={
                         isBuy
