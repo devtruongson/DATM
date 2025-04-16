@@ -85,7 +85,7 @@ const MovieTicketBooking = ({ handleCreateOrder, dataOrder, className, setStep, 
                                 <img
                                     src={firm ? firm?.poster : '/images/content/cc1.jpg'}
                                     alt="Movie Poster"
-                                    className="w-full h-auto rounded-md"
+                                    className="w-full h-auto rounded-md max-h-[500px] object-cover"
                                 />
                             </div>
                         </Card>

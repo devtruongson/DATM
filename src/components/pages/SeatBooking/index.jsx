@@ -193,10 +193,10 @@ const SeatBooking = () => {
                     });
                 }, 1000);
             },
-            onError: () => {
+            onError: (error) => {
                 Swal.fire({
                     icon: 'info',
-                    text: 'Có lỗi xảy ra khi đặt ghế!',
+                    text: error.response.data.message,
                 });
             },
         },
