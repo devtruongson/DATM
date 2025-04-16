@@ -23,17 +23,18 @@ const Cinemas = ({ filmId, currentDate, data }) => {
 export default Cinemas;
 
 const CinemaItem = ({ cinema, filmId, currentDate }) => {
+    console.log('check data :', cinema);
     const navigate = useNavigate();
     const handleNavigate = useCallback(
-        (start_time, end_time, showtime) => {
+        (start_time, end_time, showtime, screen_id) => {
             navigate(
                 routes.seat_booking.replace(
                     ':id',
-                    `${cinema?.screen_id}?filmId=${filmId}&date=${currentDate}&start_time=${start_time}&end_time=${end_time}&showtime=${showtime}`,
+                    `${screen_id}?filmId=${filmId}&date=${currentDate}&start_time=${start_time}&end_time=${end_time}&showtime=${showtime}`,
                 ),
             );
         },
-        [cinema?.screen_id, currentDate, filmId, navigate],
+        [currentDate, filmId, navigate],
     );
 
     const handleGetIcon = (type) => {
@@ -84,7 +85,12 @@ const CinemaItem = ({ cinema, filmId, currentDate }) => {
                                           onClick={() => {
                                               if (item.isExp) return;
                                               if (isLoginIn) {
-                                                  handleNavigate(item?.start_time, item?.end_time, item.id);
+                                                  handleNavigate(
+                                                      item?.start_time,
+                                                      item?.end_time,
+                                                      item.id,
+                                                      item.screen_id,
+                                                  );
                                               } else {
                                                   handleToggle();
                                               }

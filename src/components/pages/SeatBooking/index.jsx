@@ -203,8 +203,8 @@ const SeatBooking = () => {
     });
 
     const handleCreateOrder = (dataOrder, discount = '') => {
-        const valid = isValidBooking(dataRenderSeat, booking);
-        if (!valid) return;
+        // const valid = isValidBooking(dataRenderSeat, booking);
+        // if (!valid) return;
 
         const formData = new FormData();
         formData.append('showtime_id', queryParams?.showtime);
