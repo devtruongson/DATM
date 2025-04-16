@@ -32,26 +32,34 @@ const MovieBooking = () => {
     );
 
     const handleBuilderShowtimesForDate = (dataBuider) => {
+        console.log('dataBuider :', dataBuider);
         let dataBuild = [];
         dataBuider.forEach((item) => {
             const date = item.date;
             const inputDateTime = new Date(`${date}T${item.start_time}:00`).getTime();
+            const dt = new Date();
             const isExp = inputDateTime < Date.now();
-            item.isExp = isExp;
-            const dataItem = {
-                id: item.id,
-                date: item.date,
-                data: [
-                    {
-                        ...item,
-                    },
-                ],
-            };
-            const index = dataBuild.findIndex((dataBuildItem) => dataBuildItem.date === date);
-            if (index === -1) {
-                dataBuild.push(dataItem);
-            } else {
-                dataBuild[index].data.push(item);
+            console.log(date);
+            const isExpDate =
+                new Date(date).getTime() <=
+                new Date(dt.getFullYear() + '-' + (dt.getMonth() + 1) + '-' + dt.getDate()).getTime();
+            if (!isExpDate) {
+                item.isExp = isExp;
+                const dataItem = {
+                    id: item.id,
+                    date: item.date,
+                    data: [
+                        {
+                            ...item,
+                        },
+                    ],
+                };
+                const index = dataBuild.findIndex((dataBuildItem) => dataBuildItem.date === date);
+                if (index === -1) {
+                    dataBuild.push(dataItem);
+                } else {
+                    dataBuild[index].data.push(item);
+                }
             }
         });
 
@@ -128,8 +136,6 @@ const MovieBooking = () => {
             }
         }
     }, [dataShowTime]);
-
-    console.log('check dataShowTimeRender :', dataShowTimeRender);
 
     return (
         <MainTemplate>
