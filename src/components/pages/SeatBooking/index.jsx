@@ -613,7 +613,7 @@ const SeatBooking = () => {
                                         label: 'Giờ chiếu',
                                         value: formatTime(showTimeData?.data?.start_time),
                                     },
-                                    { icon: 'bi bi-tv', label: 'Phòng chiếu', value: screenData?.data?.name },
+                                    { icon: 'bi bi-tv', label: 'Phòng chiếu', value: showTimeData?.data?.screen.name },
                                     {
                                         icon: 'bi bi-film',
                                         label: 'Ghế',
