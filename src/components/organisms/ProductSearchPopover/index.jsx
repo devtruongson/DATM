@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { Input, Popover } from 'antd';
+import { Popover } from 'antd';
 import { useMemo, useState } from 'react';
 
 const ProductSearchPopover = ({ products }) => {
@@ -45,14 +45,14 @@ const ProductSearchPopover = ({ products }) => {
             onOpenChange={(v) => setVisible(v)}
             overlay="w-80"
         >
-            <Input
+            <input
+                className="h-[100%] border-none px-2 w-[250px] outline-none"
                 placeholder="Tìm kiếm sản phẩm theo tên..."
                 value={searchValue}
                 onChange={(e) => {
                     setSearchValue(e.target.value);
                     if (!visible) setVisible(true);
                 }}
-                className="w-full p-2"
             />
         </Popover>
     );

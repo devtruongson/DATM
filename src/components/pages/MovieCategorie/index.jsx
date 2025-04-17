@@ -10,7 +10,6 @@ import { useGetAllGenres } from '../../../services/genres/getAllGenres';
 import { useGetListMovieShowing } from '../../../services/movie/getListMovieShowing';
 import { useGetListMovieUpShowing } from '../../../services/movie/getListMovieUpShowing';
 import { useGetAllMovies } from '../../../services/movie/useGetOneMovie';
-import ProductSearchPopover from '../../organisms/ProductSearchPopover';
 import ContainerWapper from '../../templates/ContainerWapper';
 import MainTemplate from '../../templates/MainTemplate';
 import './styles.css';
@@ -144,7 +143,7 @@ const MovieCate = () => {
                     </Title>
                     <div className="w-16 h-1 bg-red-500 mx-auto mt-2"></div>
                 </div>
-                <ProductSearchPopover products={listMoviesArr} />
+                {/* <ProductSearchPopover products={listMoviesArr} /> */}
                 <div className="pt-[20px] h-[400px]">
                     <Carousel autoplay arrows className="arrow_show">
                         <div className="h-full">

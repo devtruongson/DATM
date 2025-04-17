@@ -1,11 +1,14 @@
-import { Carousel, Menu, Modal, Popover, Select } from 'antd';
+import { Carousel, Menu, Modal, Popover } from 'antd';
 import axios from 'axios';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { handleDataProvince, handleLogoutUser, handleToggleModalAuth } from '../../../app/slices/appSlice';
+import { handleBuilderMovies } from '../../../helpers/handleReBuildMovies';
+import { useGetAllMovies } from '../../../services/movie/useGetOneMovie';
 import MovieProDrawer from '../ModalNav';
+import ProductSearchPopover from '../ProductSearchPopover/index';
 
 export default function Header() {
     const [cate, setCate] = useState();
@@ -868,6 +871,19 @@ export default function Header() {
         </div>
     );
 
+    const { data: dataMovies } = useGetAllMovies({});
+    const listMovies = useMemo(
+        () =>
+            dataMovies?.data
+                ?.map((item) => {
+                    return handleBuilderMovies(item);
+                })
+                .slice(0, 10) || [],
+        [dataMovies],
+    );
+
+    const listMoviesArr = useMemo(() => (dataMovies?.data ? dataMovies.data : []), [dataMovies]);
+
     const [provinceId, setProvinceId] = useState(null);
     const [cinemaId, setCinemaId] = useState(null);
 
@@ -982,14 +998,15 @@ export default function Header() {
                     <div className=""></div>
                     <Fragment>
                         <div style={{}} className="h-[50px] rounded-[10px] overflow-hidden lg:flex hidden items-center">
-                            <Select
+                            {/* <Select
                                 className="h-[100%] select-ant-none-radius"
                                 style={{ width: 140, borderRadius: 0 }}
                                 options={cate}
                                 value={cateSelected}
                                 onChange={handleChangeCate}
-                            />
-                            <input
+                            /> */}
+                            <ProductSearchPopover products={listMoviesArr} />
+                            {/* <input
                                 className="h-[100%] border-none px-2 w-[250px]"
                                 style={{
                                     outline: 'none',
@@ -999,7 +1016,7 @@ export default function Header() {
                             />
                             <button className="bg-[#000] text-[#fff] h-full w-[50px]">
                                 <i className="bi bi-search-heart"></i>
-                            </button>
+                            </button> */}
                         </div>
                         {!isLoginIn && !user ? (
                             <button
