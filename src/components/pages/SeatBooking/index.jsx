@@ -941,7 +941,7 @@ const Chair = ({
                 if (type === 'Ghế thường') {
                     return '#7331d6';
                 }
-                if (type === 'Ghế VIP' || type === 'Ghế V.I.P') {
+                if (type === 'Ghế VIP' || type === 'Ghế V.I.P' || type === 'Ghế vip') {
                     return '#f14052';
                 }
 
@@ -962,7 +962,7 @@ const Chair = ({
         if (type === 'Ghế thường') {
             return '#7331d6';
         }
-        if (type === 'Ghế VIP' || type === 'Ghế V.I.P') {
+        if (type === 'Ghế VIP' || type === 'Ghế V.I.P' || type === 'Ghế vip') {
             return '#f14052';
         }
 

@@ -133,8 +133,9 @@ const MovieTicketBooking = ({ handleCreateOrder, dataOrder, className, setStep, 
                                                 {formatVND(
                                                     Math.floor(
                                                         calculateTotal(dataOrder) +
-                                                            parseFloat(getPriceSeatTotal()) *
-                                                                ((100 - percentDiscount) / 100),
+                                                            parseFloat(
+                                                                getPriceSeatTotal() - parseFloat(percentDiscount),
+                                                            ),
                                                     ),
                                                 )}
                                             </div>
