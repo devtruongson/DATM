@@ -22,7 +22,6 @@ const ContactUs = () => {
     const [form] = Form.useForm();
 
     const onFinish = (values) => {
-        console.log('Form Values:', values);
         // Xử lý dữ liệu form tại đây (gửi lên server, gọi API,...)
     };
 

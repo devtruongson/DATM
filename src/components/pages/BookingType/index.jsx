@@ -24,14 +24,14 @@ const MovieTicketBooking = ({ handleCreateOrder, dataOrder, className, setStep, 
         return total;
     }
 
-    console.log('Check bookings: ', bookings);
-
     const [discountCode, setDiscountCode] = useState('');
     const [percentDiscount, setPercentDiscount] = useState(0);
 
     useEffect(() => {
         if (promoCode.length === 0) return;
-        const percent = promoCode.find((item) => item.code === discountCode)?.discount_amount;
+        const percent = promoCode.find(
+            (item) => item.code === discountCode && item.status === 'active',
+        )?.discount_amount;
         if (percent) {
             setPercentDiscount(parseFloat(percent));
         } else {

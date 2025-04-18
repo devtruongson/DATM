@@ -1,18 +1,18 @@
-import { boxShadow } from '../../../constants';
-import BlogCard from '../../molecules/BlogCard';
-import BlogRight from '../../organisms/BlogRight';
-import ContainerWapper from '../../templates/ContainerWapper';
-import MainTemplate from '../../templates/MainTemplate';
+import { Form } from 'antd';
 import bs1 from '../../../../public/images/content/blog_category/bs1.jpg';
 import bs2 from '../../../../public/images/content/blog_category/bs2.jpg';
 import bs3 from '../../../../public/images/content/blog_category/bs3.jpg';
 import bs4 from '../../../../public/images/content/blog_category/bs4.jpg';
 import bs5 from '../../../../public/images/content/blog_category/bs5.jpg';
 import avatarDefault from '../../../../public/images/content/blog_category/comm_img1.jpg';
-import Empty from '../../organisms/Empty';
+import { boxShadow } from '../../../constants';
 import { formatDateView } from '../../../helpers/formatDateView';
 import Indicator from '../../atoms/Indicator';
-import { Form } from 'antd';
+import BlogCard from '../../molecules/BlogCard';
+import BlogRight from '../../organisms/BlogRight';
+import Empty from '../../organisms/Empty';
+import ContainerWapper from '../../templates/ContainerWapper';
+import MainTemplate from '../../templates/MainTemplate';
 
 const data = {
     id: 1,
@@ -40,9 +40,7 @@ const data = {
 const BlogSingle = () => {
     const [form] = Form.useForm();
 
-    const handleSubmit = (data) => {
-        console.log(data);
-    };
+    const handleSubmit = (data) => {};
 
     return (
         <MainTemplate>

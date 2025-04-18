@@ -1,5 +1,5 @@
 const index = () => {
-    console.log("todo");
+    console.log('todo');
     return <div>TODO</div>;
 };
 

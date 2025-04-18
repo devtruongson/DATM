@@ -23,7 +23,6 @@ const Cinemas = ({ filmId, currentDate, data }) => {
 export default Cinemas;
 
 const CinemaItem = ({ cinema, filmId, currentDate }) => {
-    console.log('check data :', cinema);
     const navigate = useNavigate();
     const handleNavigate = useCallback(
         (start_time, end_time, showtime, screen_id) => {

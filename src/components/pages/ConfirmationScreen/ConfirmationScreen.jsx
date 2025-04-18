@@ -2,24 +2,41 @@ import { CheckCircleOutlined, QrcodeOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { handleBuilderMovies } from '../../../helpers/handleReBuildMovies';
 import axios from '../../../libs/axios';
+import { useGetAllMovies } from '../../../services/movie/useGetOneMovie';
 import MainTemplate from '../../templates/MainTemplate';
 
 const BookingConfirmation = () => {
     const [searchParams] = useSearchParams();
     const queryParams = useMemo(() => Object?.fromEntries(searchParams.entries()), [searchParams]);
     const [ticket, setTicket] = useState(null);
+    const { data: dataMovies } = useGetAllMovies({});
+    const listMovies = useMemo(
+        () =>
+            dataMovies?.data
+                ?.map((item) => {
+                    return handleBuilderMovies(item);
+                })
+                .slice(0, 10) || [],
+        [dataMovies],
+    );
 
     useEffect(() => {
         axios.get('/tickets').then((res) => {
             const { data } = res.data;
-            if (data[0]?.status === 'paid') {
-                setTicket(data[0]);
+            if (data) {
+                const checkDataExit = data.find((item) => item.ticket_id === queryParams?.id);
+                if (checkDataExit?.status === 'paid') {
+                    setTicket(checkDataExit);
+                } else {
+                    if (data[0]?.status === 'paid') {
+                        setTicket(data[0]);
+                    }
+                }
             }
         });
     }, [queryParams]);
-
-    console.log(ticket);
 
     return (
         <MainTemplate>
@@ -39,7 +56,15 @@ const BookingConfirmation = () => {
                         <div className="flex items-center border-t border-b py-4">
                             <div className="w-24 h-32 mr-4">
                                 <img
-                                    src="https://img.pikbest.com/png-images/20241031/professional-law-firm-logo-vector-on-transparent-background_11037315.png!sw800"
+                                    src={
+                                        listMovies && listMovies.length > 0
+                                            ? listMovies.find(
+                                                  (item) =>
+                                                      item?.title?.toLocaleLowerCase()?.trim() ===
+                                                      ticket?.movie_name?.toLocaleLowerCase()?.trim(),
+                                              )?.poster
+                                            : 'https://img.pikbest.com/png-images/20241031/professional-law-firm-logo-vector-on-transparent-background_11037315.png!sw800'
+                                    }
                                     alt="Movie Poster"
                                     className="w-full h-full object-cover rounded"
                                 />

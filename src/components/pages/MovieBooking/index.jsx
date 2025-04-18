@@ -36,7 +36,6 @@ const MovieBooking = () => {
         dataBuider.forEach((item) => {
             const date = item.date;
             const inputDateTime = new Date(`${date}T${item.start_time}:00`).getTime();
-            console.log('check inputDateTime : ', inputDateTime, `${date}T${item.start_time}:00`);
             const dt = new Date();
             const isExp = inputDateTime < Date.now();
             const isExpDate =
@@ -104,8 +103,6 @@ const MovieBooking = () => {
     };
 
     const handleSearchFilterLocation = (value) => {
-        console.log('search:', value);
-    };
 
     useEffect(() => {
         if (dataShowTime && dataShowTime.length > 0) {

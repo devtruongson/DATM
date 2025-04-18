@@ -1,4 +1,4 @@
-import { Carousel, Menu, Modal, Popover } from 'antd';
+import { Menu, Modal, Popover } from 'antd';
 import axios from 'axios';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { handleDataProvince, handleLogoutUser, handleToggleModalAuth } from '../../../app/slices/appSlice';
 import { handleBuilderMovies } from '../../../helpers/handleReBuildMovies';
+import { useGetAllGenres } from '../../../services/genres/getAllGenres';
 import { useGetAllMovies } from '../../../services/movie/useGetOneMovie';
 import MovieProDrawer from '../ModalNav';
 import ProductSearchPopover from '../ProductSearchPopover/index';
@@ -69,749 +70,124 @@ export default function Header() {
         _fetch();
     }, []);
 
-    const headerNavidata = [
-        {
-            label: <span className="text-[#fff]">HOME</span>,
-            key: 'home',
-            children: [
-                {
-                    label: 'Index - I',
-                    key: (Math.random() * 10000).toString(),
-                },
-                {
-                    type: 'divider',
-                },
-                {
-                    label: 'Index - II',
-                    key: (Math.random() * 10000).toString(),
-                },
-                {
-                    type: 'divider',
-                },
-                {
-                    label: 'Index - III',
-                    key: (Math.random() * 10000).toString(),
-                },
-                {
-                    type: 'divider',
-                },
-                {
-                    label: <Link to={'/film-detail'}>Index - IV</Link>,
-                    key: (Math.random() * 10000).toString(),
-                },
-            ],
-        },
-        {
-            label: <span className="text-[#fff]">POPULAR MOVIES</span>,
-            key: (Math.random() * 10000).toString(),
-            popupClassName: 'submenu-horizontal',
-            children: [
-                {
-                    type: 'group',
-                    label: (
-                        <span className="lg:text-[#000] text-white lg:font-bold text-[16px]">Popular Hindi Movies</span>
-                    ),
-                    children: [
-                        {
-                            label: 'Bajiro Mastani',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                        {
-                            label: 'Drishyam',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                        {
-                            label: 'Queen',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                        {
-                            label: 'Wanted',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                        {
-                            label: 'Veer',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                        {
-                            label: 'Jannat',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                        {
-                            label: 'Baaghi',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                        {
-                            label: 'Baaghi-2',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                    ],
-                },
-                {
-                    type: 'group',
-                    label: (
-                        <span className="text-[16px] lg:text-[#000] text-white lg:font-bold">
-                            Popular Kannada Movies
-                        </span>
-                    ),
-                    children: [
-                        {
-                            label: 'Bajiro Mastani',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                        {
-                            label: 'Drishyam',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                        {
-                            label: 'Queen',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                        {
-                            label: 'Wanted',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                        {
-                            label: 'Veer',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                        {
-                            label: 'Jannat',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                        {
-                            label: 'Baaghi',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                        {
-                            label: 'Baaghi-2',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                    ],
-                },
-                {
-                    type: 'group',
-                    label: (
-                        <span className="text-[16px] lg:text-[#000] text-white lg:font-bold">
-                            Popular Bengali Movies
-                        </span>
-                    ),
-                    children: [
-                        {
-                            label: 'Bajiro Mastani',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                        {
-                            label: 'Drishyam',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                        {
-                            label: 'Queen',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                        {
-                            label: 'Wanted',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                        {
-                            label: 'Veer',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                        {
-                            label: 'Jannat',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                        {
-                            label: 'Baaghi',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                        {
-                            label: 'Baaghi-2',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                    ],
-                },
-                {
-                    type: 'group',
-                    label: (
-                        <span className="text-[16px] lg:text-[#000] text-white lg:font-bold">
-                            Popular Kannada Movies
-                        </span>
-                    ),
-                    children: [
-                        {
-                            label: 'Bajiro Mastani',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                        {
-                            label: 'Drishyam',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                        {
-                            label: 'Queen',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                        {
-                            label: 'Wanted',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                        {
-                            label: 'Veer',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                        {
-                            label: 'Jannat',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                        {
-                            label: 'Baaghi',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                        {
-                            label: 'Baaghi-2',
-                            icon: (
-                                <i
-                                    className="bi bi-camera-reels-fill"
-                                    style={{
-                                        color: '#ee4d2d',
-                                    }}
-                                ></i>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                    ],
-                },
-                {
-                    type: 'group',
-                    label: <span className="text-[16px] lg:text-[#000] text-white lg:font-bold"></span>,
-                    popupClassName: 'course_custome',
-                    children: [
-                        {
-                            label: (
-                                <Carousel
-                                    autoplay
-                                    style={{
-                                        width: '300px',
-                                        height: '100%',
-                                    }}
-                                >
-                                    <div>
-                                        <img
-                                            className="h-[100%] w-[100%] object-cover"
-                                            src="/images/content/up1.jpg"
-                                            alt="navi_img"
-                                        />
-                                    </div>
-                                    <div>
-                                        <img
-                                            className="h-[100%] w-[100%] object-cover"
-                                            src="/images/content/up2.jpg"
-                                            alt="navi_img"
-                                        />
-                                    </div>
-                                    <div>
-                                        <img
-                                            className="h-[100%] w-[100%] object-cover"
-                                            src="/images/content/up3.jpg"
-                                            alt="navi_img"
-                                        />
-                                    </div>
-                                </Carousel>
-                            ),
-                            key: (Math.random() * 10000).toString(),
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            label: <span className="text-[#fff]">TV SHOW</span>,
-            key: 'tv-show',
-            children: [
-                {
-                    label: 'Star Plus',
-                    key: 'Star Plus',
-                },
-                {
-                    type: 'divider',
-                },
-                {
-                    label: 'Star Jalsha',
-                    key: (Math.random() * 10000).toString(),
-                },
-                {
-                    type: 'divider',
-                },
-                {
-                    label: 'Star Jalsha',
-                    key: (Math.random() * 10000).toString(),
-                },
-                {
-                    type: 'divider',
-                },
-                {
-                    label: 'Sony TV',
-                    key: 'Sony TV',
-                },
-                {
-                    type: 'divider',
-                },
-                {
-                    label: 'Sab TV',
-                    key: 'Sab TV',
-                },
-                {
-                    type: 'divider',
-                },
-                {
-                    label: 'Sony Pal',
-                    key: 'Sony Pal',
-                },
-            ],
-        },
-        {
-            label: <span className="text-[#fff]">VIDEO</span>,
-            key: 'video',
-            popupClassName: 'submenu-horizontal custom_more',
-            children: [
-                {
-                    label: (
-                        <div className="w-[300px] h-[300px] relative group">
-                            <img className="w-full h-full object-cover" src="/images/content/vp1.jpg" alt="video_img" />
-                            <div className="absolute top-0 left-0 right-0 bottom-0 hidden group-hover:block">
-                                <div className="absolute top-0 left-0 right-0 bottom-0 bg-[rgba(0,0,0,0.6)]"></div>
-                                <button
-                                    className=""
-                                    onClick={() => {
-                                        setIdPlay('7mg0rZc5cus');
-                                        openModal();
-                                    }}
-                                >
-                                    <i className="bi bi-play-fill text-white text-4xl absolute inset-0 flex items-center justify-center"></i>
-                                </button>
-                            </div>
-                        </div>
-                    ),
-                },
+    const { data } = useGetAllGenres({});
+    const { data: dataMovies } = useGetAllMovies({});
 
-                {
-                    label: (
-                        <div className="w-[300px] h-[300px] relative group">
-                            <img className="w-full h-full object-cover" src="/images/content/vp2.jpg" alt="video_img" />
-                            <div className="absolute top-0 left-0 right-0 bottom-0 hidden group-hover:block">
-                                <div className="absolute top-0 left-0 right-0 bottom-0 bg-[rgba(0,0,0,0.6)]"></div>
-                                <button
-                                    className=""
-                                    onClick={() => {
-                                        setIdPlay('7mg0rZc5cus');
-                                        openModal();
-                                    }}
-                                >
-                                    <i className="bi bi-play-fill text-white text-4xl absolute inset-0 flex items-center justify-center"></i>
-                                </button>
-                            </div>
-                        </div>
-                    ),
-                },
+    const targetGenres = useMemo(() => {
+        if (!data?.data || !dataMovies?.data) return [];
+        return data.data.slice(0, 3).map((item) => ({
+            cate: item.name,
+            data: dataMovies.data
+                .filter((movie) => movie.genres?.some((genre) => genre.genre_id === item.id))
+                .map(handleBuilderMovies),
+        }));
+    }, [data?.data, dataMovies?.data]);
 
-                {
-                    label: (
-                        <div className="w-[300px] h-[300px] relative group">
-                            <img className="w-full h-full object-cover" src="/images/content/vp3.jpg" alt="video_img" />
-                            <div className="absolute top-0 left-0 right-0 bottom-0 hidden group-hover:block">
-                                <div className="absolute top-0 left-0 right-0 bottom-0 bg-[rgba(0,0,0,0.6)]"></div>
-                                <button
-                                    className=""
-                                    onClick={() => {
-                                        setIdPlay('7mg0rZc5cus');
-                                        openModal();
-                                    }}
-                                >
-                                    <i className="bi bi-play-fill text-white text-4xl absolute inset-0 flex items-center justify-center"></i>
-                                </button>
-                            </div>
-                        </div>
-                    ),
-                },
+    const [headerNavidata, setHeaderNavidata] = useState([]);
 
-                {
-                    label: (
-                        <div className="w-[300px] h-[300px] relative group">
-                            <img className="w-full h-full object-cover" src="/images/content/vp4.jpg" alt="video_img" />
-                            <div className="absolute top-0 left-0 right-0 bottom-0 hidden group-hover:block">
-                                <div className="absolute top-0 left-0 right-0 bottom-0 bg-[rgba(0,0,0,0.6)]"></div>
-                                <button
-                                    className=""
-                                    onClick={() => {
-                                        setIdPlay('7mg0rZc5cus');
-                                        openModal();
-                                    }}
-                                >
-                                    <i className="bi bi-play-fill text-white text-4xl absolute inset-0 flex items-center justify-center"></i>
-                                </button>
-                            </div>
-                        </div>
-                    ),
-                },
-
-                {
-                    label: (
-                        <div className="w-[300px] h-[300px] relative group">
-                            <img className="w-full h-full object-cover" src="/images/content/vp5.jpg" alt="video_img" />
-                            <div className="absolute top-0 left-0 right-0 bottom-0 hidden group-hover:block">
-                                <div className="absolute top-0 left-0 right-0 bottom-0 bg-[rgba(0,0,0,0.6)]"></div>
-                                <button
-                                    className=""
-                                    onClick={() => {
-                                        setIdPlay('7mg0rZc5cus');
-                                        openModal();
-                                    }}
-                                >
-                                    <i className="bi bi-play-fill text-white text-4xl absolute inset-0 flex items-center justify-center"></i>
-                                </button>
-                            </div>
-                        </div>
-                    ),
-                },
-                {
-                    label: (
-                        <div className="w-[300px] h-[300px] relative group">
-                            <img className="w-full h-full object-cover" src="/images/content/vp6.jpg" alt="video_img" />
-                            <div className="absolute top-0 left-0 right-0 bottom-0 hidden group-hover:block">
-                                <div className="absolute top-0 left-0 right-0 bottom-0 bg-[rgba(0,0,0,0.6)]"></div>
-                                <button
-                                    className=""
-                                    onClick={() => {
-                                        setIdPlay('7mg0rZc5cus');
-                                        openModal();
-                                    }}
-                                >
-                                    <i className="bi bi-play-fill text-white text-4xl absolute inset-0 flex items-center justify-center"></i>
-                                </button>
-                            </div>
-                        </div>
-                    ),
-                },
-            ],
-        },
-        {
-            label: <span className="text-[#fff]">PAGES</span>,
-            key: 'page',
-            children: [
-                {
-                    type: 'group',
-                    label: <span className="lg:text-[#000] text-white lg:font-bold text-[16px]">Blog</span>,
-                    children: [
-                        {
-                            label: (
-                                <Link to={'/blog_category'} className="lg:text-black text-white">
-                                    Blog-Category
-                                </Link>
-                            ),
-                            key: 'Blog-Category',
-                        },
-                        {
-                            label: <Link to={'/blog_single/1'}>Blog-Single</Link>,
-                            key: 'Blog-Single',
-                        },
-                    ],
-                },
-                {
-                    type: 'group',
-                    label: <span className="lg:text-[#000] text-white lg:font-bold text-[16px]">Movie</span>,
-                    children: [
-                        {
-                            label: <Link to={'/movie-category'}>Movie-Category</Link>,
-                            key: 'Movie-Category',
-                        },
-                        {
-                            label: <Link to={'/movie-single'}>Movie-Single</Link>,
-                            key: 'Movie-Single',
-                        },
-                        {
-                            label: <Link to={'/movie-single'}>Movie-Single II</Link>,
-                            key: 'Movie-Single-II',
-                        },
-                    ],
-                },
-                {
-                    label: <Link to={'/gallery'}>gallery</Link>,
-                    key: 'gallery',
-                },
-                {
-                    label: <Link to={'/booking-type'}>Booking-Type</Link>,
-                    key: 'Booking-Type',
-                },
-                {
-                    label: <Link to={'/confirmation-screen'}>Confirmation-Screen</Link>,
-                    key: 'Confirmation-Screen',
-                },
-                {
-                    label: <Link to={'/movie-booking'}>Movie-Booking</Link>,
-                    key: 'Movie-Booking',
-                },
-                {
-                    label: <Link to={'/seat-booking'}>Seat-Booking</Link>,
-                    key: 'Seat-Booking',
-                },
-            ],
-        },
-        {
-            label: (
-                <span className="text-[#fff]">
-                    <Link to="/contact?label=Contact">CONTACT</Link>
-                </span>
-            ),
-            key: 'CONTACT',
-        },
-    ];
+    useEffect(() => {
+        if (targetGenres && targetGenres.length > 0) {
+            setHeaderNavidata(() => {
+                return [
+                    {
+                        label: (
+                            <span className="text-[#fff]" onClick={() => (window.location.href = '/')}>
+                                HOME
+                            </span>
+                        ),
+                        key: 'home',
+                    },
+                    ...targetGenres.map((item) => {
+                        return {
+                            label: <span className="text-[#fff]">{item.cate}</span>,
+                            key: `${Math.random() * 10000}`,
+                            children: item.data.map((itemChild) => {
+                                return {
+                                    label: (
+                                        <span
+                                            onClick={() => {
+                                                window.location.href = `/movie_booking/${itemChild.id}`;
+                                            }}
+                                        >
+                                            {itemChild.title}
+                                        </span>
+                                    ),
+                                    key: (Math.random() * 10000).toString(),
+                                };
+                            }),
+                        };
+                    }),
+                    {
+                        label: (
+                            <span className="text-[#fff]">
+                                <Link to="/contact?label=Contact">CONTACT</Link>
+                            </span>
+                        ),
+                        key: 'CONTACT',
+                    },
+                    {
+                        label: <span className="text-[#fff]">BLOG</span>,
+                        key: 'BLOG',
+                        children: [
+                            {
+                                label: (
+                                    <span
+                                        onClick={() => {
+                                            window.location.href = `/blog_category`;
+                                        }}
+                                    >
+                                        Blog Categories
+                                    </span>
+                                ),
+                                key: (Math.random() * 10000).toString(),
+                            },
+                            {
+                                label: (
+                                    <span
+                                        onClick={() => {
+                                            window.location.href = `/blog_single/1`;
+                                        }}
+                                    >
+                                        Blog Single
+                                    </span>
+                                ),
+                                key: (Math.random() * 10000).toString(),
+                            },
+                        ],
+                    },
+                    {
+                        label: (
+                            <span className="text-[#fff]">
+                                <Link to="/chinh-sach">CHÍNH SÁCH</Link>
+                            </span>
+                        ),
+                        key: 'CHINHSACH',
+                    },
+                ];
+            });
+        } else {
+            setHeaderNavidata(() => {
+                return [
+                    {
+                        label: (
+                            <span className="text-[#fff]" onClick={() => (window.location.href = '/')}>
+                                HOME
+                            </span>
+                        ),
+                        key: 'home',
+                    },
+                    {
+                        label: (
+                            <span className="text-[#fff]">
+                                <Link to="/contact?label=Contact">CONTACT</Link>
+                            </span>
+                        ),
+                        key: 'CONTACT',
+                    },
+                ];
+            });
+        }
+    }, [targetGenres]);
 
     // const [isMenuOpenMobile, setIsMenuOpenMobile] = useState(false);
     const [open, setOpen] = useState(false);
@@ -871,7 +247,6 @@ export default function Header() {
         </div>
     );
 
-    const { data: dataMovies } = useGetAllMovies({});
     const listMovies = useMemo(
         () =>
             dataMovies?.data
@@ -982,7 +357,7 @@ export default function Header() {
             <div className="px-[15px] flex justify-between items-center w-full">
                 <div className="flex items-center gap-[20px] flex-1">
                     <a href="/">
-                        <img src="/images/header/logo.png" alt="" />
+                        <img className="h-[100%] max-h-[60px]" src="/images/logo.png" alt="" />
                     </a>
                     <div className="lg:block hidden flex-1">
                         <Menu
@@ -1061,12 +436,12 @@ export default function Header() {
                             </Popover>
                         )}
                     </Fragment>
-                    <button
+                    {/* <button
                         onClick={() => setModalProvince(true)}
                         className="py-2.5 px-5 h-[50px] me-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                     >
                         Xem vị trí
-                    </button>
+                    </button> */}
                     <button
                         onClick={showDrawer}
                         className="w-[50px] h-[50px]  bg-[rgba(0,0,0,0.2)] rounded-[10px] flex justify-center items-center"

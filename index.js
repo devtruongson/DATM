@@ -588,4 +588,3 @@ arr.sort((a, b) => {
     if (a.row > b.row) return 1;
     return a.number - b.number;
 });
-console.log(arr);

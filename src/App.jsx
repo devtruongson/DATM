@@ -26,6 +26,7 @@ import MovieBooking from './components/pages/MovieBooking';
 import MovieCate from './components/pages/MovieCategorie';
 import MovieSingle from './components/pages/MovieSingle';
 import MovieSingleSecond from './components/pages/MovieSingleSecond';
+import Policy from './components/pages/Policy';
 import SeatBooking from './components/pages/SeatBooking';
 import { routes } from './routes';
 import './style.css';
@@ -89,6 +90,7 @@ function App() {
                 <Route path={routes.movie_single} element={<MovieSingle />} />
                 <Route path={routes.me} element={<Me />} />
                 <Route path={routes.forgotPassword} element={<ForgotPassword />} />
+                <Route path={routes.policy} element={<Policy />} />
             </Routes>
             <PreviewTrailler isModalOpen={isOpenModalPriviewVideo} url={url} handleCancel={handleCancelPreviewVideo} />
             {!isLoginIn && <LoginModal />}

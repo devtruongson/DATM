@@ -24,14 +24,6 @@ const LoginModal = () => {
     const loginUserMutation = useLoginUser({
         mutationConfig: {
             onSuccess(data) {
-                console.log(data);
-                console.log({
-                    user: data.user,
-                    tokens: {
-                        accessToken: data.access_token,
-                        refreshToken: data.refresh_token,
-                    },
-                });
                 dispatch(
                     handleLoginUserSuccess({
                         user: data.user,
@@ -99,7 +91,6 @@ const LoginModal = () => {
             if (!user) {
                 return;
             }
-            console.log(user);
             let dataBuider = {
                 name: user.displayName,
                 email: user.email,
