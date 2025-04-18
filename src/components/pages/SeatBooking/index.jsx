@@ -683,6 +683,7 @@ const ListChair = ({ target, booked, booking, setBooking, isDoubleChair, type, d
                     const isHoldSeat = dataHold.find((itemChild) => itemChild.seat_id === item.id);
                     return (
                         <Chair
+                            seat_code={item.seat_code}
                             toggleHold={toggleHold}
                             isHoldSeat={isHoldSeat}
                             name={`${target.row}${item.number}`}
@@ -920,6 +921,7 @@ const Chair = ({
     isBuy,
     isHoldSeat,
     toggleHold,
+    seat_code,
 }) => {
     const isBooked = useMemo(() => booked?.find((item) => item.name === name), [name, booked]);
     const isBooking = useMemo(() => booking?.find((item) => item.name === name), [name, booking]);
@@ -1038,7 +1040,7 @@ const Chair = ({
                             : handleChoose
                     }
                 >
-                    {name}
+                    {seat_code}
                 </div>
             </div>
         </Popover>
