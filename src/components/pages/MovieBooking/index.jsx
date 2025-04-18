@@ -103,6 +103,8 @@ const MovieBooking = () => {
     };
 
     const handleSearchFilterLocation = (value) => {
+        console.log('search:', value);
+    };
 
     useEffect(() => {
         if (dataShowTime && dataShowTime.length > 0) {
