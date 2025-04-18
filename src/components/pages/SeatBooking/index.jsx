@@ -620,7 +620,7 @@ const SeatBooking = () => {
                                         value: booking.length
                                             ? booking.map((item, index) => (
                                                   <span className="mx-1" key={index}>
-                                                      {item?.name}
+                                                      {item?.seat_code}
                                                   </span>
                                               ))
                                             : 'Chưa chọn',
@@ -987,6 +987,7 @@ const Chair = ({
                 ...prev,
                 {
                     name: name,
+                    seat_code: seat_code,
                     price: priceNotFormat,
                     id,
                 },

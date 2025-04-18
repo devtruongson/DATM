@@ -24,6 +24,8 @@ const MovieTicketBooking = ({ handleCreateOrder, dataOrder, className, setStep, 
         return total;
     }
 
+    console.log('Check bookings: ', bookings);
+
     const [discountCode, setDiscountCode] = useState('');
     const [percentDiscount, setPercentDiscount] = useState(0);
 
@@ -73,8 +75,16 @@ const MovieTicketBooking = ({ handleCreateOrder, dataOrder, className, setStep, 
                                 <div>
                                     PLATINUM -{' '}
                                     {bookings?.map((item, index) => (
-                                        <span className="mx-2" key={index}>
-                                            {item.name}
+                                        <span
+                                            className="mx-2 border-collapse border-cyan-300 border"
+                                            style={{
+                                                border: '1px solid #ccc',
+                                                borderRadius: 4,
+                                                padding: '4px 6px',
+                                            }}
+                                            key={index}
+                                        >
+                                            {item.seat_code}
                                         </span>
                                     ))}{' '}
                                     ({bookings?.length} TICKETS)
@@ -99,8 +109,16 @@ const MovieTicketBooking = ({ handleCreateOrder, dataOrder, className, setStep, 
                                     <Text>
                                         Ghế -{' '}
                                         {bookings?.map((item, index) => (
-                                            <span className="mx-2" key={index}>
-                                                {item.name}
+                                            <span
+                                                className="mx-2"
+                                                style={{
+                                                    border: '1px solid #ccc',
+                                                    borderRadius: 4,
+                                                    padding: '4px 6px',
+                                                }}
+                                                key={index}
+                                            >
+                                                {item.seat_code}
                                             </span>
                                         ))}
                                     </Text>
