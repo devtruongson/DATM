@@ -101,10 +101,11 @@ const MovieDetailsSingleSecond = () => {
                             {trendingStories.map((story) => (
                                 <Card
                                     key={story.id}
-                                    className="min-w-[220px] flex-none"
+                                    className="min-w-[220px] flex-none !border-none !shadow-none"
                                     cover={<img alt={story.title} src={story.image} />}
-                                    bodyStyle={{ padding: '12px' }}
-                                    bordered={false}
+                                    styles={{
+                                        body: { padding: '12px' },
+                                    }}
                                 >
                                     <Text strong className="text-sm leading-tight block">
                                         {story.title}
@@ -149,10 +150,11 @@ const MovieDetailsSingleSecond = () => {
                                 {castMembers.map((member) => (
                                     <Card
                                         key={member.id}
-                                        className="min-w-[100px] flex-none"
                                         cover={<img alt={member.name} src={member.image} />}
-                                        bodyStyle={{ padding: '12px', textAlign: 'center' }}
-                                        bordered={false}
+                                        className="min-w-[100px] flex-none !border-none !shadow-none"
+                                        styles={{
+                                            body: { padding: '12px', textAlign: 'center' },
+                                        }}
                                     >
                                         <Text className="text-sm font-medium text-red-500 block">{member.name}</Text>
                                         <Text type="secondary" className="text-xs block">
@@ -175,10 +177,11 @@ const MovieDetailsSingleSecond = () => {
                                 {crewMembers.map((member) => (
                                     <Card
                                         key={member.id}
-                                        className="min-w-[100px] flex-none"
                                         cover={<img alt={member.name} src={member.image} />}
-                                        bodyStyle={{ padding: '12px', textAlign: 'center' }}
-                                        bordered={false}
+                                        className="min-w-[100px] flex-none !border-none !shadow-none"
+                                        styles={{
+                                            body: { padding: '12px', textAlign: 'center' },
+                                        }}
                                     >
                                         <Text className="text-sm font-medium text-red-500 block">{member.name}</Text>
                                         <Text type="secondary" className="text-xs block">
@@ -202,16 +205,22 @@ const MovieDetailsSingleSecond = () => {
                             <Text className="text-xs text-red-500">Know Box Office Report</Text>
                         </div>
                     </Card>
-                    <Card className="mb-6 bg-gray-800" bodyStyle={{ padding: '12px' }} bordered={false}>
+                    <Card
+                        className="mb-6 bg-gray-800 !border-none !shadow-none"
+                        styles={{
+                            body: { padding: '12px' },
+                        }}
+                    >
                         <Text strong className="text-sm text-white">
                             CORPORATE BOOKING
                         </Text>
                     </Card>
                     <Card
-                        className="mb-6 object-cover rounded-md"
+                        className="mb-6 object-cover rounded-md !border-none !shadow-none"
                         cover={<img alt="Fantasy Sports" src="/images/index_III/add.png" />}
-                        bordered={false}
-                        bodyStyle={{ padding: 0 }}
+                        styles={{
+                            body: { padding: 0 },
+                        }}
                     />
                     <div>
                         <Title level={5} className="mb-4">

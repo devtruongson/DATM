@@ -196,7 +196,7 @@ const MovieCard = ({ movie }) => {
     return (
         <Card
             className="rounded-2xl shadow-lg overflow-hidden"
-            bodyStyle={{ padding: '1rem' }}
+            styles={{ body: { padding: '1rem' } }}
             cover={<img alt={movie.title} src={movie.poster} className="h-[400px] object-cover w-full" />}
         >
             <h2 className="text-lg font-semibold text-blue-900 mb-1 line-clamp-1">{movie.title}</h2>

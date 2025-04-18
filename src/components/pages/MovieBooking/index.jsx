@@ -96,7 +96,7 @@ const MovieBooking = () => {
     const { data: dataProvinceQuery } = useGetListProvince({});
     const dataProvince = useMemo(() => (dataProvinceQuery?.data ? dataProvinceQuery?.data : []), [dataProvinceQuery]);
 
-    const [filterLocation, setFilterLocation] = useState(null);
+    const [filterLocation, setFilterLocation] = useState('null');
 
     const handleFilterLocation = (value) => {
         setFilterLocation(value);
@@ -177,7 +177,7 @@ const MovieBooking = () => {
                                 onSearch={handleSearchFilterLocation}
                                 options={[
                                     {
-                                        value: null,
+                                        value: 'null',
                                         label: 'Tất cả khu vực',
                                     },
                                     ...dataProvince.map((item) => {

@@ -296,7 +296,7 @@ export default function Header() {
 
     return (
         <header className="bg-[#ff4444] h-[100px] flex items-center">
-            <Modal
+            {/* <Modal
                 onCancel={() => setModalProvince(false)}
                 width={'40vw'}
                 open={modalProvince}
@@ -352,7 +352,7 @@ export default function Header() {
                         </select>
                     </div>
                 </div>
-            </Modal>
+            </Modal> */}
 
             <div className="px-[15px] flex justify-between items-center w-full">
                 <div className="flex items-center gap-[20px] flex-1">

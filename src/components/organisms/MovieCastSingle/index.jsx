@@ -157,10 +157,11 @@ export default function MovieCastSingle() {
                     {crewMembers.map((member) => (
                         <div key={member.id} className="px-2">
                             <Card
-                                className="min-w-[100px] flex-none"
+                                className="min-w-[100px] flex-none !border-none !shadow-none"
                                 cover={<img alt={member.name} src={member.image} />}
-                                bodyStyle={{ padding: '12px', textAlign: 'center' }}
-                                bordered={false}
+                                styles={{
+                                    body: { padding: '12px', textAlign: 'center' },
+                                }}
                             >
                                 <Text className="text-sm font-medium text-red-500 block">{member.name}</Text>
                                 <Text type="secondary" className="text-xs block">

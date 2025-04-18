@@ -3,8 +3,7 @@ import api from '../../libs/axios';
 
 export const GET_ALL_MOVIES_QUERY_KEY = 'movies';
 
-const getAllMovies = async (payload) => {
-    console.log(payload);
+const getAllMovies = async () => {
     const { data } = await api.get(`/movies`);
     return data;
 };

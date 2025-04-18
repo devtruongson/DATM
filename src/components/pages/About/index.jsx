@@ -242,7 +242,9 @@ const FilmProductionWebsite = () => {
                                 <Card
                                     hoverable
                                     cover={<img src="/images/content/about/tm1.jpg" alt="Main Director" />}
-                                    bodyStyle={{ padding: '16px', textAlign: 'center' }}
+                                    styles={{
+                                        body: { padding: '16px', textAlign: 'center' },
+                                    }}
                                     className="h-full"
                                 >
                                     <Title level={5} className="uppercase m-0">
@@ -259,7 +261,9 @@ const FilmProductionWebsite = () => {
                                             key={member.id}
                                             hoverable
                                             cover={<img src={member.image} alt={member.name} />}
-                                            bodyStyle={{ padding: '16px', textAlign: 'center' }}
+                                            styles={{
+                                                body: { padding: '16px', textAlign: 'center' },
+                                            }}
                                         >
                                             <Title level={5} className="uppercase m-0">
                                                 {member.name}
