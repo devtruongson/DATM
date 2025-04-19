@@ -135,7 +135,7 @@ const MovieCate = () => {
     ];
 
     return (
-        <MainTemplate>
+        <MainTemplate isShowBanner={false}>
             <ContainerWapper>
                 <div className="text-center mb-10 mt-20">
                     <Title level={2} className="uppercase font-bold">

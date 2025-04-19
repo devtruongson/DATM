@@ -3,11 +3,11 @@ import Footer from '../organisms/Footer';
 import WithHeaderTemplate from './WithHeaderTemplate';
 
 // eslint-disable-next-line react/prop-types
-const MainTemplate = ({ children }) => {
+const MainTemplate = ({ children, isShowBanner = true }) => {
     return (
         <WithHeaderTemplate>
             <>
-                <Banner />
+                {isShowBanner ? <Banner /> : ''}
                 <div className="bg-[#f6f6f6] pb-[60px]">{children}</div>
                 <Footer />
             </>
