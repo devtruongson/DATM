@@ -86,107 +86,144 @@ export default function Header() {
     const [headerNavidata, setHeaderNavidata] = useState([]);
 
     useEffect(() => {
-        if (targetGenres && targetGenres.length > 0) {
-            setHeaderNavidata(() => {
-                return [
-                    {
-                        label: (
-                            <span className="text-[#fff]" onClick={() => (window.location.href = '/')}>
-                                HOME
-                            </span>
-                        ),
-                        key: 'home',
-                    },
-                    ...targetGenres.map((item) => {
-                        return {
-                            label: <span className="text-[#fff]">{item.cate}</span>,
-                            key: `${Math.random() * 10000}`,
-                            children: item.data.map((itemChild) => {
-                                return {
-                                    label: (
-                                        <span
-                                            onClick={() => {
-                                                window.location.href = `/movie_booking/${itemChild.id}`;
-                                            }}
-                                        >
-                                            {itemChild.title}
-                                        </span>
-                                    ),
-                                    key: (Math.random() * 10000).toString(),
-                                };
-                            }),
-                        };
-                    }),
-                    {
-                        label: (
-                            <span className="text-[#fff]">
-                                <Link to="/contact?label=Contact">CONTACT</Link>
-                            </span>
-                        ),
-                        key: 'CONTACT',
-                    },
-                    {
-                        label: <span className="text-[#fff]">BLOG</span>,
-                        key: 'BLOG',
-                        children: [
-                            {
-                                label: (
-                                    <span
-                                        onClick={() => {
-                                            window.location.href = `/blog_category`;
-                                        }}
-                                    >
-                                        Blog Categories
-                                    </span>
-                                ),
-                                key: (Math.random() * 10000).toString(),
-                            },
-                            {
-                                label: (
-                                    <span
-                                        onClick={() => {
-                                            window.location.href = `/blog_single/1`;
-                                        }}
-                                    >
-                                        Blog Single
-                                    </span>
-                                ),
-                                key: (Math.random() * 10000).toString(),
-                            },
-                        ],
-                    },
-                    {
-                        label: (
-                            <span className="text-[#fff]">
-                                <Link to="/chinh-sach">CHÍNH SÁCH</Link>
-                            </span>
-                        ),
-                        key: 'CHINHSACH',
-                    },
-                ];
-            });
-        } else {
-            setHeaderNavidata(() => {
-                return [
-                    {
-                        label: (
-                            <span className="text-[#fff]" onClick={() => (window.location.href = '/')}>
-                                HOME
-                            </span>
-                        ),
-                        key: 'home',
-                    },
-                    {
-                        label: (
-                            <span className="text-[#fff]">
-                                <Link to="/contact?label=Contact">CONTACT</Link>
-                            </span>
-                        ),
-                        key: 'CONTACT',
-                    },
-                ];
-            });
-        }
+        setHeaderNavidata(() => {
+            return [
+                {
+                    label: (
+                        <span className="text-[#fff]" onClick={() => (window.location.href = '/')}>
+                            HOME
+                        </span>
+                    ),
+                    key: 'home',
+                },
+                {
+                    label: (
+                        <span className="text-[#fff]">
+                            <Link to="/contact?label=Contact">CONTACT</Link>
+                        </span>
+                    ),
+                    key: 'CONTACT',
+                },
+                {
+                    label: (
+                        <span className="text-[#fff]">
+                            <Link to="/gia-ghe ">GIÁ BÁN</Link>
+                        </span>
+                    ),
+                    key: 'SEAT',
+                },
+                {
+                    label: (
+                        <span className="text-[#fff]">
+                            <Link to="/chinh-sach">CHÍNH SÁCH</Link>
+                        </span>
+                    ),
+                    key: 'CHINHSACH',
+                },
+            ];
+        });
+
+        // if (targetGenres && targetGenres.length > 0) {
+        //     setHeaderNavidata(() => {
+        //         return [
+        //             {
+        //                 label: (
+        //                     <span className="text-[#fff]" onClick={() => (window.location.href = '/')}>
+        //                         HOME
+        //                     </span>
+        //                 ),
+        //                 key: 'home',
+        //             },
+        //             ...targetGenres.map((item) => {
+        //                 return {
+        //                     label: <span className="text-[#fff]">{item.cate}</span>,
+        //                     key: `${Math.random() * 10000}`,
+        //                     children: item.data.map((itemChild) => {
+        //                         return {
+        //                             label: (
+        //                                 <span
+        //                                     onClick={() => {
+        //                                         window.location.href = `/movie_booking/${itemChild.id}`;
+        //                                     }}
+        //                                 >
+        //                                     {itemChild.title}
+        //                                 </span>
+        //                             ),
+        //                             key: (Math.random() * 10000).toString(),
+        //                         };
+        //                     }),
+        //                 };
+        //             }),
+        //             {
+        //                 label: (
+        //                     <span className="text-[#fff]">
+        //                         <Link to="/contact?label=Contact">CONTACT</Link>
+        //                     </span>
+        //                 ),
+        //                 key: 'CONTACT',
+        //             },
+        //             {
+        //                 label: <span className="text-[#fff]">BLOG</span>,
+        //                 key: 'BLOG',
+        //                 children: [
+        //                     {
+        //                         label: (
+        //                             <span
+        //                                 onClick={() => {
+        //                                     window.location.href = `/blog_category`;
+        //                                 }}
+        //                             >
+        //                                 Blog Categories
+        //                             </span>
+        //                         ),
+        //                         key: (Math.random() * 10000).toString(),
+        //                     },
+        //                     {
+        //                         label: (
+        //                             <span
+        //                                 onClick={() => {
+        //                                     window.location.href = `/blog_single/1`;
+        //                                 }}
+        //                             >
+        //                                 Blog Single
+        //                             </span>
+        //                         ),
+        //                         key: (Math.random() * 10000).toString(),
+        //                     },
+        //                 ],
+        //             },
+        //             {
+        //                 label: (
+        //                     <span className="text-[#fff]">
+        //                         <Link to="/chinh-sach">CHÍNH SÁCH</Link>
+        //                     </span>
+        //                 ),
+        //                 key: 'CHINHSACH',
+        //             },
+        //         ];
+        //     });
+        // } else {
+        //     setHeaderNavidata(() => {
+        //         return [
+        //             {
+        //                 label: (
+        //                     <span className="text-[#fff]" onClick={() => (window.location.href = '/')}>
+        //                         HOME
+        //                     </span>
+        //                 ),
+        //                 key: 'home',
+        //             },
+        //             {
+        //                 label: (
+        //                     <span className="text-[#fff]">
+        //                         <Link to="/contact?label=Contact">CONTACT</Link>
+        //                     </span>
+        //                 ),
+        //                 key: 'CONTACT',
+        //             },
+        //         ];
+        //     });
+        // }
     }, [targetGenres]);
 
     // const [isMenuOpenMobile, setIsMenuOpenMobile] = useState(false);

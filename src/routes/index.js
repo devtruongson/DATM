@@ -13,5 +13,6 @@ export const routes = {
     movie_single: '/movie_single', // eg: http://localhost:5173/movie_single
     me: '/me', // eg: http://localhost:5173/movie_single,
     forgotPassword: '/forgot-password',
-    policy: 'chinh-sach',
+    policy: '/chinh-sach',
+    seat: '/gia-ghe',
 };
