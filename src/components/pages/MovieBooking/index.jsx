@@ -37,7 +37,7 @@ const MovieBooking = () => {
             const date = item.date;
             const inputDateTime = new Date(`${date}T${item.start_time}:00`).getTime();
             const dt = new Date();
-            const isExp = inputDateTime < Date.now();
+            const isExp = inputDateTime + 30 * 60 * 1000 < Date.now();
             const isExpDate =
                 new Date(date).getTime() <=
                 new Date(dt.getFullYear() + '-' + (dt.getMonth() + 1) + '-' + dt.getDate()).getTime();
