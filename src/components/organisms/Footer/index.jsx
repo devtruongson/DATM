@@ -1,18 +1,18 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable react/prop-types */
-import ContainerWapper from '../../templates/ContainerWapper';
+import { FacebookOutlined, LinkedinOutlined, TwitterSquareFilled, YoutubeOutlined } from '@ant-design/icons';
+import { Fragment, useRef } from 'react';
+import Slider from 'react-slick';
+import f1 from '../../../../public/images/content/f1.jpg';
+import f2 from '../../../../public/images/content/f2.jpg';
 import p1 from '../../../../public/images/content/p1.jpg';
 import p2 from '../../../../public/images/content/p2.jpg';
 import p3 from '../../../../public/images/content/p3.jpg';
 import p4 from '../../../../public/images/content/p4.jpg';
 import p5 from '../../../../public/images/content/p5.jpg';
 import p6 from '../../../../public/images/content/p6.jpg';
-import { FacebookOutlined, LinkedinOutlined, TwitterSquareFilled, YoutubeOutlined } from '@ant-design/icons';
-import { Fragment, useRef } from 'react';
-import f1 from '../../../../public/images/content/f1.jpg';
-import f2 from '../../../../public/images/content/f2.jpg';
 import Indicator from '../../atoms/Indicator';
-import Slider from 'react-slick';
+import ContainerWapper from '../../templates/ContainerWapper';
 import './styles.css';
 
 const cates = [
@@ -180,7 +180,7 @@ const Footer = () => {
                         <div className="w-[100%] flex lg:flex-row flex-col justify-between items-center lg:px-0 px-[20px] lg:gap-0 gap-[20px]">
                             <p className="text-[16px] text-center">
                                 Copyright 2022-23 <span className="text-[#f44343] text-[14px]">Movie Pro</span>. All
-                                rights reserved - Design by <span className="text-[#f44343]">FStack</span>
+                                rights reserved
                             </p>
                             <div className="flex justify-end items-center gap-[8px]">
                                 {socials.map((item, index) => {

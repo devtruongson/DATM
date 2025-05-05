@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 import { CopyOutlined, DownOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Badge, Button, Card, Col, Descriptions, List, message, Modal, Popover, Row, Spin } from 'antd';
-import { HttpStatusCode } from 'axios';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -38,34 +37,41 @@ const SeatBooking = () => {
     const movie = useMemo(() => (movieData?.data ? handleBuilderMovies(movieData?.data) : null), [movieData]);
     const [promoCode, setPromoCode] = useState([]);
 
-    useEffect(() => {
-        const _fetch = async () => {
-            try {
-                const res = await axios.get('https://booking-runtime.vercel.app/booking');
-                if (res.data.code === HttpStatusCode.Ok) {
-                    setDataHold(res.data.data);
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        };
-        const id = setInterval(_fetch, 600);
-        return () => clearInterval(id);
-    }, []);
+    // useEffect(() => {
+    //     const _fetch = async () => {
+    //         try {
+    //             const res = await axios.get('https://booking-runtime.vercel.app/booking');
+    //             if (res.data.code === HttpStatusCode.Ok) {
+    //                 setDataHold(
+    //                     res?.data?.data
+    //                         ? res.data.data.filter(
+    //                               (item) => parseInt(item.show_time) === parseInt(queryParams?.showtime),
+    //                           )
+    //                         : [],
+    //                 );
+    //             }
+    //         } catch (error) {
+    //             console.log(error);
+    //         }
+    //     };
+    //     const id = setInterval(_fetch, 600);
+    //     return () => clearInterval(id);
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, []);
 
     const toggleHold = async (id, type) => {
-        try {
-            if (type === 'add') {
-                await axios.post('https://booking-runtime.vercel.app/booking', {
-                    id,
-                    show_time_id: queryParams?.showtime,
-                });
-            } else {
-                await axios.delete(`https://booking-runtime.vercel.app/booking/${id}/${queryParams?.showtime}`);
-            }
-        } catch (error) {
-            console.log(error);
-        }
+        // try {
+        //     if (type === 'add') {
+        //         await axios.post('https://booking-runtime.vercel.app/booking', {
+        //             id,
+        //             show_time_id: queryParams?.showtime,
+        //         });
+        //     } else {
+        //         await axios.delete(`https://booking-runtime.vercel.app/booking/${id}/${queryParams?.showtime}`);
+        //     }
+        // } catch (error) {
+        //     console.log(error);
+        // }
     };
 
     useEffect(() => {
@@ -241,6 +247,11 @@ const SeatBooking = () => {
 
         createOrderMutation.mutate(formData);
     };
+
+    useEffect(() => {
+        isValidBooking(dataRenderSeat, booking);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [booking]);
 
     function isValidBooking(seats, selectedSeats) {
         if (selectedSeats.length === 0) {
